@@ -1,0 +1,10 @@
+[project]
+name = "EpiGimp"
+version = "0.1.0"
+description = "A small GIMP-like image editor built with PySide6"
+authors = [ { name = "Your Name" } ]
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
