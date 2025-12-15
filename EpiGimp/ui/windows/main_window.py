@@ -1,6 +1,7 @@
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QStatusBar, QAction, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QStatusBar, QFileDialog
+from PySide6.QtGui import QAction
 from PySide6.QtGui import QKeySequence
-from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
+from EpiGimp.ui.widgets.canvas_widgets import CanvasWidget
 from EpiGimp.config.settings import load_settings
 
 class MainWindow(QMainWindow):
