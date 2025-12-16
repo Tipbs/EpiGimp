@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QStatusBar, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QStatusBar, QFileDialog, QPushButton
 from PySide6.QtGui import QAction
 from PySide6.QtGui import QKeySequence
 from EpiGimp.ui.widgets.canvas_widgets import CanvasWidget
@@ -17,6 +17,11 @@ class MainWindow(QMainWindow):
 
         self.canvas = CanvasWidget()
         layout.addWidget(self.canvas)
+        self.canvas._drawButton = QPushButton("Draw", self)
+        self.canvas._drawButton.move(10, 10)
+        layout.addWidget(self.canvas._drawButton)
+        self.canvas._drawButton.clicked.connect(self.canvas._toggle_drawing_mode)
+
 
 
         self._create_actions()
