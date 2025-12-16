@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter, QImage
 from PySide6.QtCore import Qt, QSize
 import numpy as np
+from EpiGimp.core.fileio.file_loader import FileLoader
+from EpiGimp.core.fileio.file_saver import FileSaver
 
 class CanvasWidget(QWidget):
     def __init__(self, parent=None):
@@ -22,15 +24,25 @@ class CanvasWidget(QWidget):
 
 
     def load_image(self, path: str):
-        img = QImage(path)
-        if img.isNull():
-            return
-        self._image = img.convertToFormat(QImage.Format_RGBA8888)
-        self.update()
-
+        loader = FileLoader(path)
+        layers, metadata = loader.load_project()
+        if layers:
+            layer_data = layers[0]['data']
+            self.set_numpy(layer_data)
 
     def save_image(self, path: str):
-        self._image.save(path)
+        saver = FileSaver(path)
+        arr = self.get_numpy()
+        layer = {
+            'name': 'Exported Layer',
+            'visible': True,
+            'opacity': 1.0,
+            'blend_mode': 'normal',
+            'position': (0, 0),
+            'data': arr
+        }
+        saver.save_project([layer])
+
 
 
 # Convenience bridge to numpy (pixels as H x W x 4 uint8)
