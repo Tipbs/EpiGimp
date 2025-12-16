@@ -3,6 +3,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtGui import QKeySequence
 from EpiGimp.ui.widgets.canvas_widgets import CanvasWidget
 from EpiGimp.config.settings import load_settings
+from EpiGimp.ui.widgets.export_widget import ExportWidget
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -37,11 +38,16 @@ class MainWindow(QMainWindow):
         self.save_act.setShortcut(QKeySequence('Ctrl+S'))
         self.save_act.triggered.connect(self.save_file)
 
+        self.export_act = QAction('Export...', self)
+        self.export_act.setShortcut(QKeySequence('Ctrl+E'))
+        self.export_act.triggered.connect(self.export_file)
+
 
     def _create_menus(self):
         file_menu = self.menuBar().addMenu('File')
         file_menu.addAction(self.open_act)
         file_menu.addAction(self.save_act)
+        file_menu.addAction(self.export_act)
 
 
     def open_file(self):
@@ -54,3 +60,8 @@ class MainWindow(QMainWindow):
         path, _ = QFileDialog.getSaveFileName(self, 'Save image')
         if path:
             self.canvas.save_image(path)
+
+    def export_file(self):
+        export_dialog = ExportWidget(self)
+        image_data = self.canvas.get_numpy()
+        export_dialog.export_image(image_data)

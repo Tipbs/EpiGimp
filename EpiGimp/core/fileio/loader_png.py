@@ -4,4 +4,5 @@ class LoaderPng:
     def __init__(self, filename: str):
         cv2.imread(filename, cv2.IMREAD_COLOR)
 
-    def get_layer(self, )
+    def get_layer(self) -> cv2.Mat:
+        pass
