@@ -2,7 +2,7 @@
 name = "EpiGimp"
 version = "0.1.0"
 description = "A small GIMP-like image editor built with PySide6"
-authors = [ { name = "Your Name" } ]
+authors = [ { name = "DaiC" } ]
 
 
 [build-system]
