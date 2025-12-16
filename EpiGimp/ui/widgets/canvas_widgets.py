@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter, QImage
 from PySide6.QtCore import Qt, QSize
+from typing import override
 import numpy as np
 
 class CanvasWidget(QWidget):
@@ -11,10 +12,12 @@ class CanvasWidget(QWidget):
         self._image.fill(Qt.white)
 
 
+    @override
     def sizeHint(self):
         return QSize(800, 600)
 
 
+    @override
     def paintEvent(self, event):
         painter = QPainter(self)
 # Simple scaling to fit widget
@@ -47,7 +50,7 @@ class CanvasWidget(QWidget):
         return arr
 
 
-    def set_numpy(self, arr: np.ndarray):
+    def set_numpy(self, arr):
         h, w, c = arr.shape
         assert c == 4
         qimg = QImage(arr.data, w, h, 4 * w, QImage.Format_RGBA8888)
