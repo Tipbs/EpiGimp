@@ -35,9 +35,15 @@ class CanvasWidget(QWidget):
 
 # Convenience bridge to numpy (pixels as H x W x 4 uint8)
     def get_numpy(self):
-        ptr = self._image.bits()
-        ptr.setsize(self._image.byteCount())
-        arr = np.frombuffer(ptr, dtype=np.uint8).reshape((self._image.height(), self._image.width(), 4)).copy()
+        # Get image dimensions
+        width = self._image.width()
+        height = self._image.height()
+        
+        # Get the raw bytes
+        ptr = self._image.constBits()
+        
+        # Convert to numpy array
+        arr = np.frombuffer(ptr, dtype=np.uint8).reshape((height, width, 4)).copy()
         return arr
 
 
