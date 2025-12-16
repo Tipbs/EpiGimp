@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QWidget, QPushButton
 from PySide6.QtGui import QPainter, QImage, QColor
 from PySide6.QtCore import Qt, QSize, Signal, QPoint
+from typing import override
+
 import numpy as np
 from EpiGimp.core.fileio.file_loader import FileLoader
 from EpiGimp.core.fileio.file_saver import FileSaver
@@ -25,6 +27,7 @@ class CanvasWidget(QWidget):
         self._drawing = not self._drawing
         self._drawButton.setText("Stop Drawing" if self._drawing else "Draw")
 
+    @override
     def sizeHint(self):
         return QSize(800, 600)
 
