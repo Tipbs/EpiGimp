@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QPushButton
-from PySide6.QtGui import QPainter, QImage, QColor
-from PySide6.QtCore import Qt, QSize, Signal, QPoint
+from PySide6.QtGui import QPainter, QImage, QColor, QPen, QBrush, QPixmap, QKeyEvent, QKeySequence
+from PySide6.QtCore import Qt, QSize, Signal, QPoint, QRect
 from typing import override
 
 import numpy as np
@@ -13,15 +13,37 @@ class CanvasWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setMinimumSize(400, 300)
+        self.setFocusPolicy(Qt.StrongFocus)  # Enable keyboard focus
+        
         self._image = QImage(800, 600, QImage.Format_RGBA8888)
         self._image.fill(Qt.white)
 
         self._canvas_size = self._image.size().toTuple()
-        self._drawing = False  # Fixed: Should start as False
+        self._drawing = False
         self._last_point = QPoint()
         self._brush_size = 5
         self._brush_color = QColor(0, 0, 0, 255)
         self._brush_opacity = 1.0
+        
+        # Circle drawing state
+        self._circle_mode = False
+        self._circle_start = QPoint()
+        self._circle_preview = False
+        self._circle_radius = 0
+        
+        # Selection and move state
+        self._selection_mode = False
+        self._selecting = False
+        self._moving = False
+        self._selection_start = QPoint()
+        self._move_start = QPoint()
+        self._selection_rect = QRect()
+        self._has_selection = False
+        self._selection_content = None
+        self._temp_image = None
+        
+        # Clipboard for copy/paste
+        self._clipboard = None
 
     def _toggle_drawing_mode(self):
         self._drawing = not self._drawing
@@ -31,9 +53,94 @@ class CanvasWidget(QWidget):
     def sizeHint(self):
         return QSize(800, 600)
 
+    def keyPressEvent(self, event: QKeyEvent):
+        """Handle keyboard shortcuts"""
+        # Copy: Ctrl+C
+        if event.matches(QKeySequence.StandardKey.Copy):
+            self.copy_selection()
+            event.accept()
+            
+        # Paste: Ctrl+V
+        elif event.matches(QKeySequence.StandardKey.Paste):
+            self.paste_from_clipboard()
+            event.accept()
+            
+        # Cut: Ctrl+X
+        elif event.matches(QKeySequence.StandardKey.Cut):
+            self.cut_selection()
+            event.accept()
+            
+        # Delete/Clear: Delete or Backspace
+        elif event.key() in (Qt.Key_Delete, Qt.Key_Backspace):
+            self.delete_selection()
+            event.accept()
+            
+        # Select All: Ctrl+A
+        elif event.matches(QKeySequence.StandardKey.SelectAll):
+            self.select_all()
+            event.accept()
+            
+        # Deselect: Ctrl+D or Escape
+        elif event.key() == Qt.Key_Escape or (event.key() == Qt.Key_D and event.modifiers() & Qt.ControlModifier):
+            self.clear_selection()
+            event.accept()
+            
+        else:
+            super().keyPressEvent(event)
+
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.drawImage(self.rect(), self._image)
+        
+        # Draw the base image or temp image if moving
+        if self._temp_image is not None:
+            painter.drawImage(self.rect(), self._temp_image)
+        else:
+            painter.drawImage(self.rect(), self._image)
+        
+        # Draw selection rectangle
+        if self._selection_mode and (self._selecting or self._has_selection):
+            widget_rect = self.rect()
+            canvas_w, canvas_h = self._canvas_size
+            scale_x = widget_rect.width() / canvas_w
+            scale_y = widget_rect.height() / canvas_h
+            
+            # Convert selection rect to widget coordinates
+            widget_selection = QRect(
+                int(self._selection_rect.x() * scale_x),
+                int(self._selection_rect.y() * scale_y),
+                int(self._selection_rect.width() * scale_x),
+                int(self._selection_rect.height() * scale_y)
+            )
+            
+            # Draw marching ants selection
+            pen = QPen(Qt.black, 1, Qt.DashLine)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            painter.drawRect(widget_selection)
+            
+            # Draw white dashes offset
+            pen = QPen(Qt.white, 1, Qt.DashLine)
+            pen.setDashOffset(4)
+            painter.setPen(pen)
+            painter.drawRect(widget_selection)
+        
+        # Draw circle preview
+        if self._circle_mode and self._circle_preview:
+            pen = QPen(QColor(128, 128, 128, 128))
+            pen.setWidth(2)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            
+            widget_rect = self.rect()
+            canvas_w, canvas_h = self._canvas_size
+            scale_x = widget_rect.width() / canvas_w
+            scale_y = widget_rect.height() / canvas_h
+            
+            preview_x = int(self._circle_start.x() * scale_x)
+            preview_y = int(self._circle_start.y() * scale_y)
+            preview_radius = int(self._circle_radius * scale_x)
+            
+            painter.drawEllipse(QPoint(preview_x, preview_y), preview_radius, preview_radius)
 
     def load_image(self, path: str):
         loader = FileLoader(path)
@@ -70,27 +177,88 @@ class CanvasWidget(QWidget):
         self._image = qimg.copy()
         self.update()
 
-    def _sync_numpy_to_image(self, layer_data: np.ndarray):
-        """Sync modified numpy data back to QImage"""
-        h, w = layer_data.shape[:2]
-        qimg = QImage(layer_data.data, w, h, 4 * w, QImage.Format_RGBA8888)
-        self._image = qimg.copy()
-        self.update()
-
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            if self._drawing == True:
-                self._last_point = self._widget_to_canvas_coords(event.position().toPoint())
+            canvas_point = self._widget_to_canvas_coords(event.position().toPoint())
+            
+            if self._selection_mode:
+                # Check if clicked inside existing selection
+                if self._has_selection and self._selection_rect.contains(canvas_point):
+                    # Start moving the selection
+                    self._moving = True
+                    self._move_start = canvas_point
+                    self._copy_selection()
+                else:
+                    # Start new selection
+                    self._selecting = True
+                    self._has_selection = False
+                    self._selection_start = canvas_point
+                    self._selection_rect = QRect(canvas_point, QSize(0, 0))
+                    
+            elif self._circle_mode:
+                # Start circle drawing
+                self._circle_start = canvas_point
+                self._circle_preview = True
+                
+            elif self._drawing:
+                self._last_point = canvas_point
                 self._draw_point(self._last_point)
 
     def mouseMoveEvent(self, event):
-        if self._drawing and event.buttons() & Qt.LeftButton:
-            current_point = self._widget_to_canvas_coords(event.position().toPoint())
-            self._draw_line(self._last_point, current_point)
-            self._last_point = current_point
+        canvas_point = self._widget_to_canvas_coords(event.position().toPoint())
+        
+        if self._selection_mode and self._selecting and event.buttons() & Qt.LeftButton:
+            # Update selection rectangle
+            self._selection_rect = QRect(self._selection_start, canvas_point).normalized()
+            self.update()
+            
+        elif self._selection_mode and self._moving and event.buttons() & Qt.LeftButton:
+            # Move selection
+            delta = canvas_point - self._move_start
+            self._update_move_preview(delta)
+            
+        elif self._circle_mode and self._circle_preview and event.buttons() & Qt.LeftButton:
+            # Update circle preview radius
+            dx = canvas_point.x() - self._circle_start.x()
+            dy = canvas_point.y() - self._circle_start.y()
+            self._circle_radius = int(np.sqrt(dx * dx + dy * dy))
+            self.update()
+            
+        elif self._drawing and event.buttons() & Qt.LeftButton:
+            self._draw_line(self._last_point, canvas_point)
+            self._last_point = canvas_point
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
+            if self._selection_mode and self._selecting:
+                # Finalize selection
+                self._selecting = False
+                if self._selection_rect.width() > 5 and self._selection_rect.height() > 5:
+                    self._has_selection = True
+                else:
+                    self._has_selection = False
+                    self._selection_rect = QRect()
+                self.update()
+                
+            elif self._selection_mode and self._moving:
+                # Finalize move
+                canvas_point = self._widget_to_canvas_coords(event.position().toPoint())
+                delta = canvas_point - self._move_start
+                self._finalize_move(delta)
+                self._moving = False
+                self._temp_image = None
+                self.update()
+                
+            elif self._circle_mode and self._circle_preview:
+                # Finalize circle drawing
+                canvas_point = self._widget_to_canvas_coords(event.position().toPoint())
+                dx = canvas_point.x() - self._circle_start.x()
+                dy = canvas_point.y() - self._circle_start.y()
+                radius = int(np.sqrt(dx * dx + dy * dy))
+                self.draw_circle(self._circle_start.x(), self._circle_start.y(), radius)
+                self._circle_preview = False
+                self._circle_radius = 0
+                
             self.drawing_changed.emit()
 
     def _widget_to_canvas_coords(self, widget_point: QPoint) -> QPoint:
@@ -108,76 +276,165 @@ class CanvasWidget(QWidget):
         
         return QPoint(canvas_x, canvas_y)
 
-    def _draw_point(self, point: QPoint):
-        """Draw a single point on the active layer"""
-        # Get fresh numpy data from image
-        layer_data = self.get_numpy()  # Fixed: Get fresh data
-        x, y = point.x(), point.y()
+    def _copy_selection(self):
+        """Copy the selected area to a temporary buffer"""
+        if self._has_selection:
+            self._selection_content = self._image.copy(self._selection_rect)
+
+    def _paste_selection(self, top_left: QPoint):
+        """Paste the selection content at the given top-left position"""
+        if self._selection_content is not None:
+            painter = QPainter(self._image)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+            painter.drawImage(top_left, self._selection_content)
+            painter.end()
+            self.update()
+
+    def _update_move_preview(self, delta: QPoint):
+        """Update the preview of the moved selection"""
+        # Create temp image based on original
+        self._temp_image = self._image.copy()
         
-        self._draw_brush_stroke(layer_data, x, y)
-        self._sync_numpy_to_image(layer_data)  # Fixed: Sync back to image
+        # Clear the original selection area (make it white)
+        painter = QPainter(self._temp_image)
+        painter.setCompositionMode(QPainter.CompositionMode_Source)
+        painter.fillRect(self._selection_rect, Qt.white)
+        
+        # Draw the selection content at new position
+        new_rect = self._selection_rect.translated(delta)
+        painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+        painter.drawImage(new_rect.topLeft(), self._selection_content)
+        painter.end()
+        
+        self.update()
+
+    def _finalize_move(self, delta: QPoint):
+        """Finalize the move operation"""
+        # Apply the move to the actual image
+        painter = QPainter(self._image)
+        painter.setCompositionMode(QPainter.CompositionMode_Source)
+        
+        # Clear original area
+        painter.fillRect(self._selection_rect, Qt.white)
+        
+        # Draw at new position
+        new_rect = self._selection_rect.translated(delta)
+        painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+        painter.drawImage(new_rect.topLeft(), self._selection_content)
+        painter.end()
+        
+        # Update selection rectangle to new position
+        self._selection_rect = new_rect
+        self._selection_content = None
+
+    def _draw_point(self, point: QPoint):
+        """Draw a single point using QPainter"""
+        painter = QPainter(self._image)
+        
+        pen = QPen(self._brush_color, self._brush_size, Qt.SolidLine, Qt.RoundCap)
+        painter.setPen(pen)
+        painter.setOpacity(self._brush_opacity)
+        
+        painter.drawPoint(point)
+        
+        painter.end()
+        self.update()
 
     def _draw_line(self, start: QPoint, end: QPoint):
-        """Draw a line between two points using Bresenham's algorithm"""
-        # Get fresh numpy data from image
-        layer_data = self.get_numpy()  # Fixed: Get fresh data
+        """Draw a line between two points using QPainter"""
+        painter = QPainter(self._image)
         
-        x1, y1 = start.x(), start.y()
-        x2, y2 = end.x(), end.y()
+        pen = QPen(self._brush_color, self._brush_size, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
+        painter.setPen(pen)
+        painter.setOpacity(self._brush_opacity)
         
-        dx = abs(x2 - x1)
-        dy = abs(y2 - y1)
+        painter.setRenderHint(QPainter.Antialiasing, True)
         
-        x_step = 1 if x1 < x2 else -1
-        y_step = 1 if y1 < y2 else -1
+        painter.drawLine(start, end)
         
-        error = dx - dy
-        x, y = x1, y1
-        
-        while True:
-            self._draw_brush_stroke(layer_data, x, y)
-            if x == x2 and y == y2:
-                break
-                
-            error2 = 2 * error
-            
-            if error2 > -dy:
-                error -= dy
-                x += x_step
-                
-            if error2 < dx:
-                error += dx
-                y += y_step
-        
-        self._sync_numpy_to_image(layer_data)  # Fixed: Sync back to image
+        painter.end()
+        self.update()
 
-    def _draw_brush_stroke(self, layer_data: np.ndarray, center_x: int, center_y: int):
-        """Draw a circular brush stroke at the specified position"""
-        h, w = layer_data.shape[:2]
-        radius = self._brush_size // 2
+    def draw_circle(self, center_x: int, center_y: int, radius: int, filled: bool = False):
+        """Draw a circle using Qt's built-in drawing functions"""
+        painter = QPainter(self._image)
         
-        r = self._brush_color.red()
-        g = self._brush_color.green()
-        b = self._brush_color.blue()
-        brush_alpha = int(self._brush_color.alpha() * self._brush_opacity)
+        painter.setRenderHint(QPainter.Antialiasing, True)
         
-        for dy in range(-radius, radius + 1):
-            for dx in range(-radius, radius + 1):
-                if dx * dx + dy * dy <= radius * radius:
-                    px = center_x + dx
-                    py = center_y + dy
-                    
-                    if 0 <= px < w and 0 <= py < h:
-                        alpha = brush_alpha / 255.0
-                        inv_alpha = 1.0 - alpha
-                        
-                        layer_data[py, px, 0] = int(layer_data[py, px, 0] * inv_alpha + r * alpha)
-                        layer_data[py, px, 1] = int(layer_data[py, px, 1] * inv_alpha + g * alpha)
-                        layer_data[py, px, 2] = int(layer_data[py, px, 2] * inv_alpha + b * alpha)
-                        
-                        current_alpha = layer_data[py, px, 3] / 255.0
-                        new_alpha = current_alpha + alpha * (1.0 - current_alpha)
-                        layer_data[py, px, 3] = int(new_alpha * 255)
+        pen = QPen(self._brush_color, self._brush_size)
+        painter.setPen(pen)
+        
+        if filled:
+            brush = QBrush(self._brush_color)
+            painter.setBrush(brush)
+        else:
+            painter.setBrush(Qt.NoBrush)
+        
+        painter.setOpacity(self._brush_opacity)
+        
+        painter.drawEllipse(QPoint(center_x, center_y), radius, radius)
+        
+        painter.end()
+        self.update()
+
+    # Clipboard operations
+    def copy_selection(self):
+        """Copy selection to clipboard (Ctrl+C)"""
+        if self._has_selection:
+            self._clipboard = self._image.copy(self._selection_rect)
+            print("Selection copied to clipboard")
+        else:
+            print("No selection to copy")
+
+    def cut_selection(self):
+        """Cut selection to clipboard (Ctrl+X)"""
+        if self._has_selection:
+            self._clipboard = self._image.copy(self._selection_rect)
+            painter = QPainter(self._image)
+            painter.fillRect(self._selection_rect, Qt.white)
+            painter.end()
+            self.clear_selection()
+            self.update()
+            print("Selection cut to clipboard")
+        else:
+            print("No selection to cut")
+
+    def paste_from_clipboard(self):
+        """Paste from clipboard (Ctrl+V)"""
+        if self._clipboard is not None:
+            # Paste at center of canvas or at last selection position
+            if self._has_selection:
+                paste_pos = self._selection_rect.topLeft()
+            else:
+                # Paste at center
+                canvas_w, canvas_h = self._canvas_size
+                clip_w = self._clipboard.width()
+                clip_h = self._clipboard.height()
+                paste_pos = QPoint((canvas_w - clip_w) // 2, (canvas_h - clip_h) // 2)
+            
+            painter = QPainter(self._image)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+            painter.drawImage(paste_pos, self._clipboard)
+            painter.end()
+            
+            # Create selection around pasted content
+            self._selection_rect = QRect(paste_pos, self._clipboard.size())
+            self._has_selection = True
+            self._selection_mode = True
+            
+            self.update()
+            print("Pasted from clipboard")
+        else:
+            print("Clipboard is empty")
+
+    def select_all(self):
+        """Select entire canvas (Ctrl+A)"""
+        canvas_w, canvas_h = self._canvas_size
+        self._selection_rect = QRect(0, 0, canvas_w, canvas_h)
+        self._has_selection = True
+        self._selection_mode = True
+        self.update()
+        print("Selected all")
 
     # Helper methods for external use
     def set_brush_size(self, size: int):
@@ -188,3 +445,60 @@ class CanvasWidget(QWidget):
 
     def set_brush_opacity(self, opacity: float):
         self._brush_opacity = max(0.0, min(1.0, opacity))
+
+    def set_circle_mode(self, enabled: bool):
+        """Enable or disable circle drawing mode"""
+        self._circle_mode = enabled
+        self._selection_mode = False
+        self._circle_preview = False
+        self._circle_radius = 0
+        if enabled:
+            self._drawing = False
+
+    def set_selection_mode(self, enabled: bool):
+        """Enable or disable selection mode"""
+        self._selection_mode = enabled
+        self._circle_mode = False
+        self._drawing = False
+        if not enabled:
+            self._has_selection = False
+            self._selection_rect = QRect()
+            self._selecting = False
+            self._moving = False
+            self._temp_image = None
+            self.update()
+
+    def set_move_mode(self, enabled: bool):
+        """Enable or disable move mode for the current selection"""
+        if self._has_selection:
+            self._moving = enabled
+            self._selecting = False
+            if not enabled:
+                self._temp_image = None
+                self.update()
+
+    def clear_selection(self):
+        """Clear the current selection (Escape or Ctrl+D)"""
+        self._has_selection = False
+        self._selection_rect = QRect()
+        self._selection_content = None
+        self._selecting = False
+        self._moving = False
+        self._temp_image = None
+        self.update()
+        print("Selection cleared")
+
+    def delete_selection(self):
+        """Delete the selected area (Delete or Backspace)"""
+        if self._has_selection:
+            painter = QPainter(self._image)
+            painter.fillRect(self._selection_rect, Qt.white)
+            painter.end()
+            self.clear_selection()
+            self.update()
+            print("Selection deleted")
+        else:
+            print("No selection to delete")
+
+    def enable_selection_mode(self):
+        self.set_selection_mode(not self._selection_mode)

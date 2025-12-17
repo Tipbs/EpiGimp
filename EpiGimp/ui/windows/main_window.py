@@ -19,10 +19,19 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.canvas)
         self.canvas._drawButton = QPushButton("Draw", self)
         self.canvas._drawButton.move(10, 10)
-        layout.addWidget(self.canvas._drawButton)
         self.canvas._drawButton.clicked.connect(self.canvas._toggle_drawing_mode)
+        vlayout = QVBoxLayout()
+        layout.addLayout(vlayout)
+        vlayout.addWidget(self.canvas._drawButton, 0)
 
+        self.circle_btn = QPushButton("Circle Tool")
+        self.circle_btn.setCheckable(True)  
+        vlayout.addWidget(self.circle_btn, 2)
+        self.circle_btn.toggled.connect(self.toggle_circle_mode)
 
+        self.select_btn = QPushButton("Select Tool")
+        vlayout.addWidget(self.select_btn, 3)
+        self.select_btn.clicked.connect(self.canvas.enable_selection_mode)
 
         self._create_actions()
         self._create_menus()
@@ -47,7 +56,6 @@ class MainWindow(QMainWindow):
         self.export_act.setShortcut(QKeySequence('Ctrl+E'))
         self.export_act.triggered.connect(self.export_file)
 
-
     def _create_menus(self):
         file_menu = self.menuBar().addMenu('File')
         file_menu.addAction(self.open_act)
@@ -70,3 +78,10 @@ class MainWindow(QMainWindow):
         export_dialog = ExportWidget(self)
         image_data = self.canvas.get_numpy()
         export_dialog.export_image(image_data)
+
+    def toggle_circle_mode(self, checked):
+        self.canvas.set_circle_mode(checked)
+        if checked:
+            self.circle_btn.setText("Circle Mode: ON")
+        else:
+            self.circle_btn.setText("Circle Mode: OFF")
