@@ -41,6 +41,7 @@ class CanvasWidget(QWidget):
         if layers:
             layer_data = layers[0]['data']
             self.set_numpy(layer_data)
+            self._canvas_size = self._image.size().toTuple()
 
     def save_image(self, path: str):
         saver = FileSaver(path)
