@@ -1,23 +1,33 @@
 import numpy as np
+from typing import Tuple
 # import numpy.typing as npt
 
 
 class Layer:
     def __init__(
-        self, width: int, height: int, color=(0, 0, 0, 0), name: str = "Layer"
+            self, shape: Tuple[int, int] = (600, 400), color=(0, 0, 0, 0), name: str = "Layer", pixels = None
     ):
-        self.width: int = width
-        self.height: int = height
+        self.shape = shape
         self.name: str = name
-        r, g, b, a = color
-        self.pixels = np.zeros((height, width, 4), dtype=np.uint8)
-        self.pixels[..., 0] = r
-        self.pixels[..., 1] = g
-        self.pixels[..., 2] = b
-        self.pixels[..., 3] = a
+        if pixels is None:
+            r, g, b, a = color
+            self.pixels = np.zeros((shape[0], shape[1], 4), dtype=np.uint8)
+            self.pixels[..., 0] = r
+            self.pixels[..., 1] = g
+            self.pixels[..., 2] = b
+            self.pixels[..., 3] = a
+        else:
+            self.pixels = pixels
+            if self.pixels.shape[2] == 3:
+                rgba = np.zeros((self.shape[0], self.shape[1], 4), dtype=np.uint8)
+                rgba[..., :3] = self.pixels
+                rgba[..., 3] = 255
+                self.pixels = rgba
 
     @classmethod
-    def from_opencv(cls, img, name: str = "Layer"):
-        cls.width, cls.height, _ = img.shape
-        cls.name = name
-        cls.pixels = img
+    def from_img(cls, img, name: str = "Layer"):
+        layer = cls(img.shape, pixels=img, name=name)
+        return layer
+
+    def get_pixels(self):
+        return self.pixels

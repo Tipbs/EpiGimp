@@ -7,7 +7,7 @@ class LoaderPng:
         assert self.img is not None, "File not found"
 
     def get_layer(self):
-        return Layer.from_opencv(self.img)
+        return Layer.from_img(self.img)
 
     def get_img(self):
         return self.img
