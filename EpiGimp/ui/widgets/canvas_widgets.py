@@ -158,39 +158,25 @@ class CanvasWidget(QWidget):
         painter.drawImage(0, 0, qimg)
 
 
-    def load_image(self, path: str):
-        # loader = FileLoader(path)
-        # layers, metadata = loader.load_project()
-        # if layers:
-        #     layer_data = layers[0]['data']
-        #     self.set_numpy(layer_data)
-        #     self._canvas_size = self._image.size().toTuple()
-        # img = QImage(path)
-        # if img.isNull():
-        #     return
-        # self._image = img.convertToFormat(QImage.Format_RGBA8888)
-        # self.update()
-
+    def load_image(self, path: str, type: int = 0):
         img = LoaderPng(path).get_img()
-        canva = Canva.from_img(img)
-        self.canvas.append(canva)
+        if type == 0 and len(self.canvas) > 0:
+            self.canvas[self.canva_selected].add_img_layer(img)
+        else:
+            canva = Canva.from_img(img)
+            self.canvas.append(canva)
         self.update()
 
 
-#     def save_image(self, path: str):
-#         saver = FileSaver(path)
-#         arr = self.get_numpy()
-#         layer = {
-#             'name': 'Exported Layer',
-#             'visible': True,
-#             'opacity': 1.0,
-#             'blend_mode': 'normal',
-#             'position': (0, 0),
-#             'data': arr
-#         }
-#         saver.save_project([layer])
-#         self._image.save(path)
-#         # self._image.save(path)
+    def save_project(self, path: str):
+        if len(self.canvas) == 0:
+            return
+        self.canvas[self.canva_selected].save_project(path)
+    
+    def load_project(self, path: str):
+        canva = Canva.from_project(path)
+        self.canvas.append(canva)
+        self.update()
 #
 #     def get_numpy(self):
 #         width = self._image.width()

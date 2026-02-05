@@ -28,6 +28,14 @@ class Layer:
     def from_img(cls, img, name: str = "Layer"):
         layer = cls(img.shape, pixels=img, name=name)
         return layer
+    
+    def from_loader_dict(cls, layer_dict: dict):
+        layer = cls(
+            shape=layer_dict['data'].shape,
+            pixels=layer_dict['data'],
+            name=layer_dict.get('name', 'Layer')
+        )
+        return layer
 
     def get_pixels(self):
         return self.pixels
