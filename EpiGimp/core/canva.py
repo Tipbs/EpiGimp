@@ -9,6 +9,7 @@ class Canva:
         self.shape = shape
         self.layers: List[Layer] = []
         self.add_layer(name='Background', color=background)
+        self.project_path = None
 
 
     def add_layer(self, name: str = 'Layer', color=(0, 0, 0, 0)) -> Layer:

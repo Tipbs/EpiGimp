@@ -172,6 +172,7 @@ class CanvasWidget(QWidget):
         if len(self.canvas) == 0:
             return
         self.canvas[self.canva_selected].save_project(path)
+        self.canvas[self.canva_selected].project_path = path
     
     def load_project(self, path: str):
         canva = Canva.from_project(path)
