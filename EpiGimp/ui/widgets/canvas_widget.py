@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QTabWidget, QWidget
 from PySide6.QtGui import QPainter, QImage
 
 from typing import List
@@ -6,7 +6,25 @@ from EpiGimp.core.fileio.loader_png import *
 
 from EpiGimp.core.canva import Canva
 
-class CanvasWidget(QWidget):
+class CanvasWidget(QTabWidget):
+    def __init__(self, canvas, parent=None):
+        super().__init__(parent)
+        self.canvas_widget: List[CanvaWidget] = canvas
+        self.canvas: List[Canva] = canvas
+        self.currentChanged.connect(self.handleCurrentChanged)
+
+    def add_canva(self):
+        self.addTab(CanvaWidget(), "New Canva")
+        self.canvas.append(Canva())
+        # self.canva_widget.append()
+
+
+    def handleCurrentChanged(self, index):
+        # self.setCurrentWidget(self.canvas_widget[index])
+        pass
+
+
+class CanvaWidget(QWidget):
     # drawing_changed = Signal()
 
     def __init__(self, parent=None):
@@ -158,26 +176,39 @@ class CanvasWidget(QWidget):
         painter.drawImage(0, 0, qimg)
 
 
-    def load_image(self, path: str, type: int = 0):
+    def load_image(self, path: str):
+        # loader = FileLoader(path)
+        # layers, metadata = loader.load_project()
+        # if layers:
+        #     layer_data = layers[0]['data']
+        #     self.set_numpy(layer_data)
+        #     self._canvas_size = self._image.size().toTuple()
+        # img = QImage(path)
+        # if img.isNull():
+        #     return
+        # self._image = img.convertToFormat(QImage.Format_RGBA8888)
+        # self.update()
+
         img = LoaderPng(path).get_img()
-        if type == 0 and len(self.canvas) > 0:
-            self.canvas[self.canva_selected].add_img_layer(img)
-        else:
-            canva = Canva.from_img(img)
-            self.canvas.append(canva)
-        self.update()
-
-
-    def save_project(self, path: str):
-        if len(self.canvas) == 0:
-            return
-        self.canvas[self.canva_selected].save_project(path)
-        self.canvas[self.canva_selected].project_path = path
-    
-    def load_project(self, path: str):
-        canva = Canva.from_project(path)
+        canva = Canva.from_img(img)
         self.canvas.append(canva)
         self.update()
+
+
+#     def save_image(self, path: str):
+#         saver = FileSaver(path)
+#         arr = self.get_numpy()
+#         layer = {
+#             'name': 'Exported Layer',
+#             'visible': True,
+#             'opacity': 1.0,
+#             'blend_mode': 'normal',
+#             'position': (0, 0),
+#             'data': arr
+#         }
+#         saver.save_project([layer])
+#         self._image.save(path)
+#         # self._image.save(path)
 #
 #     def get_numpy(self):
 #         width = self._image.width()

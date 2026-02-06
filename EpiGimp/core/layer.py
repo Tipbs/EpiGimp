@@ -9,6 +9,7 @@ class Layer:
     ):
         self.shape = shape
         self.name: str = name
+        self.visibility = True
         if pixels is None:
             r, g, b, a = color
             self.pixels = np.zeros((shape[0], shape[1], 4), dtype=np.uint8)
@@ -39,3 +40,9 @@ class Layer:
 
     def get_pixels(self):
         return self.pixels
+
+    def get_visibility(self):
+        return self.visibility
+
+    def toggle_visibility(self):
+        self.visibility = not self.visibility

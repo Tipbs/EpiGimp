@@ -1,23 +1,42 @@
+from typing import List
 from PySide6.QtGui import QAction, QKeySequence
-from PySide6.QtWidgets import QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar
-from EpiGimp.ui.widgets.canvas_widgets import CanvasWidget
+from PySide6.QtWidgets import QDockWidget, QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar
+from PySide6.QtCore import Qt
+from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
 from EpiGimp.ui.widgets.export_widget import ExportWidget
 from EpiGimp.ui.dialogs.settings_dialog import SettingsDialog
 from PySide6.QtGui import QResizeEvent, QCloseEvent
+from EpiGimp.ui.widgets.layers_widget import LayersWidget
+from EpiGimp.core.canva import Canva
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         #self.settings = load_settings()
         self.setWindowTitle('EpiGimp - prototype')
+        self.layers_widget = LayersWidget()
         w = QWidget()
         self.setCentralWidget(w)
         self.settings = SettingsDialog(self)
         layout = QVBoxLayout(w)
+        self.dock_widget = QDockWidget("Layers", self)
+        self.dock_widget.setObjectName("PythonInterpreterDock")
+        self.dock_widget.setAllowedAreas(Qt.DockWidgetArea.RightDockWidgetArea)
+        layers = QWidget()
+        layout = QVBoxLayout(layers)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(2)
+        layout.addWidget(self.layers_widget)
+        # layout.addWidget(self.input_line)
+        self.dock_widget.setWidget(layers)
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_widget)
 
 
-        self.canvas = CanvasWidget()
-        layout.addWidget(self.canvas)
+        self.canvas: List[Canva] = []
+        self.canvas_widget = CanvasWidget(self.canvas)
+        self.canvas_widget.currentChanged.connect(lambda index: self.layers_widget.set_canva(self.canvas[index]))
+        layout.addWidget(self.canvas_widget)
+        layout.addWidget(self.layers_widget)
         # self.canvas._drawButton = QPushButton("Draw", self)
         # self.canvas._drawButton.move(10, 10)
         # self.canvas._drawButton.clicked.connect(self.canvas._toggle_drawing_mode)
