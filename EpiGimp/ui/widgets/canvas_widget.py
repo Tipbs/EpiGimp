@@ -192,6 +192,7 @@ class CanvaWidget(QWidget):
         img = LoaderPng(path).get_img()
         canva = Canva.from_img(img)
         self.canvas.append(canva)
+        self.canvas[len(self.canvas) - 1].project_path = path
         self.update()
 
 

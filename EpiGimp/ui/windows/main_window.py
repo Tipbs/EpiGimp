@@ -110,11 +110,16 @@ class MainWindow(QMainWindow):
         if path:
             self.canvas.save_project(path)
     
-    def load_project(self, path=None):
-        if path is None:
-            path, _ = QFileDialog.getOpenFileName(self, 'Load project', filter="EpiGimp Projects (*.epigimp)")
+    def load_project(self):
+        path, _ = QFileDialog.getOpenFileName(self, 'Load project', filter="EpiGimp Projects (*.epigimp)")
         if path:
             self.canvas.load_project(path)
+
+    def load_project_from_startup(self, path: str):
+        if path is None or path == '':
+            print("No last project to load")
+            return
+        self.canvas.load_project(path)
 
     def export_file(self):
         export_dialog = ExportWidget(self)
@@ -142,7 +147,7 @@ class MainWindow(QMainWindow):
         if general_settings.show_welcome_screen and type == 0:
             pass
         if general_settings.last_project[0] and general_settings.last_project[1] and type == 0:
-            self.load_project(general_settings.last_project[1]) 
+            self.load_project_from_startup(general_settings.last_project[1]) 
 
     def resizeEvent(self, event: QResizeEvent):
         super().resizeEvent(event)
@@ -150,9 +155,9 @@ class MainWindow(QMainWindow):
         self.settings.settings_manager.settings['general'].restore_window = [True, (size.width(), size.height())]
 
     def closeEvent(self, event: QCloseEvent):
-        self.settings.settings_manager.save_settings(self.settings.settings_manager.settings)
         if self.settings.settings_manager.settings['general'].last_project[0]:
             if len(self.canvas.canvas) > 0 and self.canvas.canvas[self.canvas.canva_selected].project_path:
-                self.settings.settings_manager.settings['general'].last_project = [True, self.canvas[self.canvas.canva_selected].project_path]
+                self.settings.settings_manager.settings['general'].last_project = [True, self.canvas.canvas[self.canvas.canva_selected].project_path]
 
+        self.settings.settings_manager.save_settings(self.settings.settings_manager.settings)
         event.accept()
