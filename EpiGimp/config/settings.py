@@ -30,6 +30,8 @@ class GeneralSettings(Settings):
         qsettings.setValue('last_project', self.last_project)
         qsettings.setValue('show_welcome_screen', self.show_welcome_screen)
         qsettings.setValue('restore_window', self.restore_window)
+        qsettings.setValue('confirm_unsaved', self.confirm_unsaved)
+        qsettings.setValue('show_tooltips', self.show_tooltips)
         qsettings.endGroup()
     
     def load(self, qsettings: QSettings):
@@ -37,6 +39,8 @@ class GeneralSettings(Settings):
         self.last_project = qsettings.value('last_project', [False, ''], type=list)
         self.show_welcome_screen = qsettings.value('show_welcome_screen', True, type=bool)
         self.restore_window = qsettings.value('restore_window', [True, (1200, 800)], type=list)
+        self.confirm_unsaved = qsettings.value('confirm_unsaved', True, type=bool)
+        self.show_tooltips = qsettings.value('show_tooltips', True, type=bool)
         qsettings.endGroup()
 
 class AppearanceSettings(Settings):

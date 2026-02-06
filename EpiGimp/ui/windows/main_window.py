@@ -1,6 +1,6 @@
 from typing import List
 from PySide6.QtGui import QAction, QKeySequence
-from PySide6.QtWidgets import QDockWidget, QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar
+from PySide6.QtWidgets import QDockWidget, QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar, QMessageBox
 from PySide6.QtCore import Qt
 from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
 from EpiGimp.ui.widgets.export_widget import ExportWidget
@@ -119,7 +119,7 @@ class MainWindow(QMainWindow):
         if path is None or path == '':
             print("No last project to load")
             return
-        self.canvas.load_project(path)
+        #self.canvas[self.canvas_widget.currentIndex()].load_project(path)
 
     def export_file(self):
         export_dialog = ExportWidget(self)
@@ -156,8 +156,13 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         if self.settings.settings_manager.settings['general'].last_project[0]:
-            if len(self.canvas.canvas) > 0 and self.canvas.canvas[self.canvas.canva_selected].project_path:
-                self.settings.settings_manager.settings['general'].last_project = [True, self.canvas.canvas[self.canvas.canva_selected].project_path]
+            if len(self.canvas) > 0 and self.canvas[self.canvas_widget.canva_selected].project_path:
+                self.settings.settings_manager.settings['general'].last_project = [True, self.canvas[self.canvas_widget.canva_selected].project_path]
+        if self.settings.settings_manager.settings['general'].confirm_unsaved:
+            reply = QMessageBox.question(self, 'Confirm Exit', 'Are you sure you want to exit? Unsaved work will be lost.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.No:
+                event.ignore()
+                return
 
         self.settings.settings_manager.save_settings(self.settings.settings_manager.settings)
         event.accept()

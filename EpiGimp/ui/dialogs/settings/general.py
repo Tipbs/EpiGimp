@@ -42,24 +42,27 @@ class GeneralSettingsPage(SettingsPage):
         #self.layout.addWidget(perf_group)
         
         ## Misc group
-        #misc_group = QGroupBox("Miscellaneous", self)
-        #misc_layout = QFormLayout()
-        #self.confirm_unsaved = QCheckBox("Confirm before closing unsaved work")
-        #self.show_tooltips = QCheckBox("Show tooltips")
-        #misc_layout.addRow(self.confirm_unsaved)
-        #misc_layout.addRow(self.show_tooltips)
-        #misc_group.setLayout(misc_layout)
-        #self.layout.addWidget(misc_group)
+        misc_group = QGroupBox("Miscellaneous", self)
+        misc_layout = QFormLayout()
+        self.confirm_unsaved = QCheckBox("Confirm before closing unsaved work")
+        self.show_tooltips = QCheckBox("Show tooltips")
+        misc_layout.addRow(self.confirm_unsaved)
+        misc_layout.addRow(self.show_tooltips)
+        misc_group.setLayout(misc_layout)
+        self.layout.addWidget(misc_group)
         
-        #self.layout.addStretch()
+        self.layout.addStretch()
     
     def save_settings(self):
         self.settings_manager.settings['general'].show_welcome_screen = self.show_welcome.isChecked()
         self.settings_manager.settings['general'].last_project = [self.open_last_project.isChecked(), self.settings_manager.settings['general'].last_project[1]]
         self.settings_manager.settings['general'].restore_window = [self.restore_window.isChecked(), self.settings_manager.settings['general'].restore_window[1]]
-    
+        self.settings_manager.settings['general'].confirm_unsaved = self.confirm_unsaved.isChecked()
+        self.settings_manager.settings['general'].show_tooltips = self.show_tooltips.isChecked()
     def load_settings(self):
         general = self.settings_manager.settings['general']
         self.show_welcome.setChecked(general.show_welcome_screen)
         self.open_last_project.setChecked(bool(general.last_project[0]))
         self.restore_window.setChecked(general.restore_window[0])
+        self.confirm_unsaved.setChecked(general.confirm_unsaved)
+        self.show_tooltips.setChecked(general.show_tooltips)
