@@ -29,8 +29,8 @@ class SettingsContainer(QStackedWidget):
 
         pages = {}
         pages['General'] = GeneralSettingsPage(self, settings_manager)
-        pages['Appearance'] = AppearanceSettingsPage(self)
-        pages['Shortcuts'] = ShortcutsSettingsPage(self)
+        pages['Appearance'] = AppearanceSettingsPage(self, settings_manager)
+        pages['Shortcuts'] = ShortcutsSettingsPage(self, settings_manager)
 
         for page in pages.values():
             page.load_settings()

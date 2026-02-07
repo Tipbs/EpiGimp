@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         self.open_act.setShortcut(QKeySequence('Ctrl+O'))
         self.open_act.triggered.connect(lambda: self.open_file(type=0))
 
-        self.open_new_act = QAction('Open File in New Canva...', self)
+        self.open_new_act = QAction('Open File in New Tab...', self)
         self.open_new_act.setShortcut(QKeySequence('Ctrl+Shift+O'))
         self.open_new_act.triggered.connect(lambda: self.open_file(type=1))
         
@@ -107,6 +107,13 @@ class MainWindow(QMainWindow):
         self.settings_act = QAction('Settings...', self)
         self.settings_act.triggered.connect(self.open_settings)
 
+        self.fullscreen_act = QAction('Toggle Fullscreen', self, checkable=True)
+        self.fullscreen_act.setShortcut(QKeySequence('F11'))
+        self.fullscreen_act.triggered.connect(self.toggle_fullscreen)
+
+        self.exit_act = QAction('Exit', self)
+        self.exit_act.triggered.connect(self.close)
+
     def _create_menus(self):
         file_menu = self.menuBar().addMenu('File')
         file_menu.addAction(self.open_act)
@@ -116,6 +123,15 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.export_act)
         file_menu.addSeparator()
         file_menu.addAction(self.settings_act)
+
+        display_menu = self.menuBar().addMenu('Display')
+        display_menu.addAction(self.fullscreen_act)
+
+    def toggle_fullscreen(self, checked):
+        if checked:
+            self.showFullScreen()
+        else:
+            self.showNormal()
 
     def open_file(self, type: int = 0):
         path, _ = QFileDialog.getOpenFileName(self, 'Open image')
@@ -159,15 +175,37 @@ class MainWindow(QMainWindow):
 
         self.load_general_settings(self.settings.settings_manager.settings['general'], type)
         #self.load_appearance_settings(self.settings.settings['appearance'])
-        #self.load_shortcuts_settings(self.settings.settings['shortcuts'])
+        self.load_shortcuts_settings(self.settings.settings_manager.settings['shortcuts'], type)
     
     def load_general_settings(self, general_settings, type: int = 0):
         if general_settings.restore_window[0] and type == 0:
             self.resize(general_settings.restore_window[1][0], general_settings.restore_window[1][1])
         if general_settings.show_welcome_screen and type == 0:
-            pass
+            from EpiGimp.ui.widgets.startup_widget import StartupDialog
+            welcome_dialog = StartupDialog(self.settings.settings_manager, self)
+            welcome_dialog.create_new_clicked.connect(lambda: self.open_file(type=0))
+            welcome_dialog.open_existing_clicked.connect(lambda: self.open_file(type=1))
+            welcome_dialog.open_recent_clicked.connect(lambda path: self.canvas.load_image(path, type=0))
+            welcome_dialog.show()
         if general_settings.last_project[0] and general_settings.last_project[1] and type == 0:
             self.load_project_from_startup(general_settings.last_project[1]) 
+    
+    def load_shortcuts_settings(self, shortcuts_settings, type: int = 0):
+        # Map setting names to action attributes
+        action_mapping = {
+            'Open File in Project': 'self.open_act',
+            'Open File in New Tab': 'self.open_new_act',
+            'Load Project': 'self.load_act',
+            'Save Project': 'self.save_act',
+            'Export': 'self.export_act'
+        }
+        
+        for action_name, shortcut in shortcuts_settings.shortcuts.items():
+            action_attr = action_mapping.get(action_name)
+            if action_attr:
+                action = getattr(self, action_attr, None)
+                if action:
+                    action.setShortcut(QKeySequence(shortcut))
 
     def resizeEvent(self, event: QResizeEvent):
         super().resizeEvent(event)
