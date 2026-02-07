@@ -1,7 +1,7 @@
-from typing import List
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import QDockWidget, QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar, QMessageBox
 from PySide6.QtCore import Qt
+from PySide6.QtCore import Signal
 from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
 from EpiGimp.ui.widgets.export_widget import ExportWidget
 from EpiGimp.ui.dialogs.settings_dialog import SettingsDialog
@@ -10,6 +10,8 @@ from EpiGimp.ui.widgets.layers_widget import LayersWidget
 from EpiGimp.core.canva import Canva
 
 class MainWindow(QMainWindow):
+    image_loaded = Signal(Canva)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         #self.settings = load_settings()
@@ -20,7 +22,7 @@ class MainWindow(QMainWindow):
         self.settings = SettingsDialog(self)
         layout = QVBoxLayout(w)
         self.dock_widget = QDockWidget("Layers", self)
-        self.dock_widget.setObjectName("PythonInterpreterDock")
+        # self.dock_widget.setObjectName("Layers")
         self.dock_widget.setAllowedAreas(Qt.DockWidgetArea.RightDockWidgetArea)
         layers = QWidget()
         layout = QVBoxLayout(layers)
@@ -31,10 +33,11 @@ class MainWindow(QMainWindow):
         self.dock_widget.setWidget(layers)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_widget)
 
-
-        self.canvas: List[Canva] = []
-        self.canvas_widget = CanvasWidget(self.canvas)
-        self.canvas_widget.currentChanged.connect(lambda index: self.layers_widget.set_canva(self.canvas[index]))
+        self.canvas_widget = CanvasWidget()
+        self.canvas_widget.currentChanged.connect(lambda index: self.layers_widget.set_canva(self.current_canva()))
+        self.image_loaded.connect(self.canvas_widget.add_canva)
+        self.layers_widget.btn_add.clicked.connect(self.add_layer)
+        self.canvas_widget.currentChanged.connect(self.canva_update)
         layout.addWidget(self.canvas_widget)
         layout.addWidget(self.layers_widget)
         # self.canvas._drawButton = QPushButton("Draw", self)
@@ -62,6 +65,22 @@ class MainWindow(QMainWindow):
         self.settings.apply_signal[int].connect(lambda: self.load_settings(1))
         #self.resize(self.settings.get('window', {}).get('width', 1200),
         #self.settings.get('window', {}).get('height', 800))
+
+    def canva_update(self):
+        self.layers_widget.update_layer_from_canva(self.canvas_widget.currentWidget().canva)
+        self.canvas_widget.currentWidget().layer_created.connect(self.layers_widget.update_layer_from_canva)
+
+
+    def add_layer(self):
+        if self.canvas_widget.count() == 0:
+            return None
+        self.canvas_widget.currentWidget().add_layer()
+
+    def current_canva(self) -> Canva|None:
+        # print(self.canvas_widget.count())
+        if self.canvas_widget.count() == 0:
+            return None
+        return self.canvas_widget.currentWidget().canva
 
 
     def _create_actions(self):
@@ -103,17 +122,18 @@ class MainWindow(QMainWindow):
         if path is None or path == '':
             print("Can't open file")
             return
-        self.canvas.load_image(path, type)
+        self.image_loaded.emit(Canva.load_image(path))
+        # self.canvas.append(Canva.load_image(path))
 
     def save_file(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save image')
         if path:
-            self.canvas.save_project(path)
+            self.current_canva().save_project(path)
     
     def load_project(self):
         path, _ = QFileDialog.getOpenFileName(self, 'Load project', filter="EpiGimp Projects (*.epigimp)")
         if path:
-            self.canvas.load_project(path)
+            self.canvas.append(Canva.load_project(path))
 
     def load_project_from_startup(self, path: str):
         if path is None or path == '':
@@ -123,7 +143,7 @@ class MainWindow(QMainWindow):
 
     def export_file(self):
         export_dialog = ExportWidget(self)
-        export_dialog.export_image(self.canvas.canvas[self.canvas.canva_selected])
+        export_dialog.export_image(self.current_canva())
 
     def open_settings(self):
         self.settings.show()
@@ -156,9 +176,9 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         if self.settings.settings_manager.settings['general'].last_project[0]:
-            if len(self.canvas) > 0 and self.canvas[self.canvas_widget.canva_selected].project_path:
-                self.settings.settings_manager.settings['general'].last_project = [True, self.canvas[self.canvas_widget.canva_selected].project_path]
-        if self.settings.settings_manager.settings['general'].confirm_unsaved:
+            if self.canvas_widget.count() > 0 and self.current_canva().project_path:
+                self.settings.settings_manager.settings['general'].last_project = [True, self.current_canva().project_path]
+        if self.settings.settings_manager.settings['general'].confirm_unsaved and self.canvas_widget.count() > 0:
             reply = QMessageBox.question(self, 'Confirm Exit', 'Are you sure you want to exit? Unsaved work will be lost.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.No:
                 event.ignore()

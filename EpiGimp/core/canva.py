@@ -1,5 +1,8 @@
 from functools import reduce
 from typing import List
+import cv2 as cv
+
+from EpiGimp.core.fileio.loader_png import LoaderPng
 from .layer import Layer
 import numpy as np
 from typing import Tuple
@@ -29,11 +32,20 @@ class Canva:
     @classmethod
     def from_img(cls, img):
         layer = Layer.from_img(img)
-        doc = cls()
-        doc.shape = layer.shape
-        doc.layers: List[Layer] = []
-        doc.add_layer_from_layer(layer)
-        return doc
+        canva = cls()
+        canva.shape = layer.shape
+        canva.layers: List[Layer] = []
+        canva.add_layer_from_layer(layer)
+        return canva
+
+    @classmethod
+    def load_image(cls, path: str):
+        canva = cls()
+        img = LoaderPng(path).get_img()
+        canva.from_img(img)
+        canva = Canva.from_img(img)
+        return canva
+
 
     @classmethod
     def from_project(cls, filename: str) -> 'Canva':
@@ -63,7 +75,6 @@ class Canva:
         return canva
 
     def get_img(self) -> Layer:
-        print(self.layers[0].shape)
         return reduce(lambda x, y: Layer(pixels=(cv.addWeighted(x.get_pixels(), 1, y.get_pixels(), 1, 0.0))), self.layers)
         # img = np.zeros((500, 500, 4), dtype=np.uint8)
         return Layer(pixels=(img))
@@ -74,7 +85,6 @@ class Canva:
         out[..., 3] = 255 # opaque base
         for layer in self.layers:
             if layer.shape != self.shape:
-                import cv2 as cv
                 resized = cv.resize(layer.pixels, (self.shape[1], self.shape[0]))
             else:
                 resized = layer.pixels

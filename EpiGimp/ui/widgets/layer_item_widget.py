@@ -13,10 +13,11 @@ class LayerItemWidget(QWidget):
     lockToggled = Signal(bool)
     nameChanged = Signal(str)
 
-    def __init__(self, name="New Layer", thumbnail=None, parent=None):
+    def __init__(self, name, layer, parent = None):
         super().__init__(parent)
         
-        # Main Layout
+        thumbnail = None
+        self.layer = layer
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
         layout.setSpacing(6)

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, 
                              QListWidget, QListWidgetItem, QPushButton, QFrame, QAbstractItemView)
 from PySide6.QtCore import Signal
+from EpiGimp.core.layer import Layer
 from EpiGimp.ui.widgets.layer_item_widget import LayerItemWidget
 from EpiGimp.core.canva import Canva
 
@@ -14,7 +15,8 @@ from EpiGimp.core.canva import Canva
 #         layout.addWidget(LayersStackWidget(canva))
 
 class LayersWidget(QFrame):
-    layerSelected = Signal(int) # Emits index of selected layer
+    layer_selcted = Signal(int) # Emits index of selected layer
+    layer_created = Signal(Canva)
 
     def __init__(self, canva=None, parent=None):
         super().__init__(parent)
@@ -42,27 +44,32 @@ class LayersWidget(QFrame):
         self.main_layout.addLayout(self.toolbar)
 
         # Internal Connections
-        self.btn_add.clicked.connect(lambda: self.add_layer("New Layer"))
-        self.btn_del.clicked.connect(self.remove_current_layer)
-        self.list_widget.currentRowChanged.connect(self.layerSelected.emit)
+        # self.btn_add.clicked.connect(lambda: self.add_layer("New Layer"))
+        # self.btn_del.clicked.connect(self.remove_current_layer)
+        self.list_widget.currentRowChanged.connect(self.layer_selcted.emit)
 
     def set_canva(self, canva: Canva):
         self.canva = canva
 
+    def update_layer_from_canva(self, canva: Canva):
+        self.list_widget.clear()
+        for layer in canva.layers:
+            item = QListWidgetItem(self.list_widget)
+            custom_widget = LayerItemWidget("Layer", layer)
+
+            # Ensure the list item is large enough for our custom widget
+            item.setSizeHint(custom_widget.sizeHint())
+
+            self.list_widget.insertItem(0, item) # GIMP adds to top
+            self.list_widget.setItemWidget(item, custom_widget)
+            self.list_widget.setCurrentItem(item)
+
+
     def add_layer(self, name, thumbnail=None):
         """Public method to add a layer from your external Canvas logic"""
-        if self.canva is None:
-            return
-        self.canva.add_layer()
-        item = QListWidgetItem(self.list_widget)
-        custom_widget = LayerItemWidget(name, thumbnail)
-        
-        # Ensure the list item is large enough for our custom widget
-        item.setSizeHint(custom_widget.sizeHint())
-        
-        self.list_widget.insertItem(0, item) # GIMP adds to top
-        self.list_widget.setItemWidget(item, custom_widget)
-        self.list_widget.setCurrentItem(item)
+        layer = Layer()
+
+        # self.layerCreated.emit(layer)
 
     def remove_current_layer(self):
         current_row = self.list_widget.currentRow()
