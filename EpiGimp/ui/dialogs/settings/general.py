@@ -1,6 +1,5 @@
 from EpiGimp.ui.dialogs.settings_dialog import SettingsPage
-from EpiGimp.config.settings import GeneralSettings
-from PySide6.QtWidgets import QGroupBox, QFormLayout, QCheckBox, QSpinBox
+from PySide6.QtWidgets import QGroupBox, QFormLayout, QCheckBox
 
 class GeneralSettingsPage(SettingsPage):
     def __init__(self, parent=None, settings =None):
@@ -63,6 +62,6 @@ class GeneralSettingsPage(SettingsPage):
         general = self.settings_manager.settings['general']
         self.show_welcome.setChecked(general.show_welcome_screen)
         self.open_last_project.setChecked(bool(general.last_project[0]))
-        self.restore_window.setChecked(general.restore_window[0])
+        self.restore_window.setChecked(general.restore_window[0] is not None)
         self.confirm_unsaved.setChecked(general.confirm_unsaved)
         self.show_tooltips.setChecked(general.show_tooltips)

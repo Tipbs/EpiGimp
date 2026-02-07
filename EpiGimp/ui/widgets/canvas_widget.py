@@ -1,23 +1,23 @@
+from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
-from PySide6.QtGui import QPainter, QImage
+from PySide6.QtGui import QImage, QPainter
 
-from typing import List
 from EpiGimp.core.fileio.loader_png import *
 
 from EpiGimp.core.canva import Canva
 
 class CanvasWidget(QTabWidget):
-    def __init__(self, canvas, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.canvas_widget: List[CanvaWidget] = canvas
-        self.canvas: List[Canva] = canvas
+        # self.canvas_widget: List[CanvaWidget] = canvas
         self.currentChanged.connect(self.handleCurrentChanged)
+        # self.btn_add = QPushButton("+", self)
+        # self.btn_add.clicked.connect(self.add_canva)
+        # self.addTab(self.btn_add, "+")
 
-    def add_canva(self):
-        self.addTab(CanvaWidget(), "New Canva")
-        self.canvas.append(Canva())
-        # self.canva_widget.append()
-
+    @Slot()
+    def add_canva(self, canva):
+        self.addTab(CanvaWidget(canva), "New Canva")
 
     def handleCurrentChanged(self, index):
         # self.setCurrentWidget(self.canvas_widget[index])
@@ -26,14 +26,18 @@ class CanvasWidget(QTabWidget):
 
 class CanvaWidget(QWidget):
     # drawing_changed = Signal()
+    layer_created = Signal(Canva)
 
-    def __init__(self, parent=None):
+    def __init__(self, canva: Canva, parent=None):
         super().__init__(parent)
+        self.canva: Canva = canva
+        self.layer_created.emit(canva)
         self.setMinimumSize(400, 300)
+        self.layer_created.connect(self.paintEvent)
         # self.setFocusPolicy(Qt.StrongFocus)  # Enable keyboard focus
         # self._image = QImage(800, 600, QImage.Format_RGBA8888)
         # self._image.fill(Qt.white)
-        self.canvas: List[Canva] = []
+        # self.canvas: List[Canva] = []
         self.canva_selected = 0
         # self._image = QImage(800, 600, QImage.Format_RGBA8888)
         # self._image.fill(Qt.white)
@@ -63,6 +67,10 @@ class CanvaWidget(QWidget):
         
         # Clipboard for copy/paste
         # self._clipboard = None
+
+    def add_layer(self):
+        self.canva.add_layer()
+        self.layer_created.emit(self.canva)
 
     # def _toggle_drawing_mode(self):
     #     self._drawing = not self._drawing
@@ -108,9 +116,6 @@ class CanvaWidget(QWidget):
     #         super().keyPressEvent(event)
 
     def paintEvent(self, event):
-        if len(self.canvas) == 0:
-            return
-        painter = QPainter(self)
 #         # Draw the base image or temp image if moving
 #         if self._temp_image is not None:
 #             painter.drawImage(self.rect(), self._temp_image)
@@ -164,6 +169,7 @@ class CanvaWidget(QWidget):
 # Simple scaling to fit widget
         # painter.drawImage(self.rect(), self._image)
 
+        painter = QPainter(self)
         np_img = self.get_img()
         h, w, _ = np_img.shape
         qimg = QImage(
@@ -174,7 +180,6 @@ class CanvaWidget(QWidget):
             QImage.Format.Format_RGBA8888
         ).copy()
         painter.drawImage(0, 0, qimg)
-
 
     def load_image(self, path: str):
         # loader = FileLoader(path)
@@ -191,9 +196,9 @@ class CanvaWidget(QWidget):
 
         img = LoaderPng(path).get_img()
         canva = Canva.from_img(img)
-        self.canvas.append(canva)
-        self.canvas[len(self.canvas) - 1].project_path = path
-        self.update()
+        # self.canvas.append(canva)
+        # self.canvas[len(self.canvas) - 1].project_path = path
+        # self.update()
 
 
 #     def save_image(self, path: str):
@@ -575,7 +580,4 @@ class CanvaWidget(QWidget):
 
 # Convenience bridge to numpy (pixels as H x W x 4 uint8)
     def get_img(self):
-        if len(self.canvas) == 0:
-            raise Exception('No canva')
-        canva = self.canvas[self.canva_selected]
-        return canva.get_img().get_pixels()
+        return self.canva.get_img().get_pixels()
