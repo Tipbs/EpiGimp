@@ -32,7 +32,6 @@ class StartupDialog(QDialog):
         self.tabs = QTabWidget(self)
         self.tabs.addTab(self._create_welcome_tab(), "Welcome")
         self.tabs.addTab(self._create_personalize_tab(), "Personalize")
-        self.tabs.addTab(self._create_contribute_tab(), "Contribute")
         self.tabs.addTab(self._create_create_tab(), "Create")
         self.tabs.addTab(self._create_release_notes_tab(), "Release Notes")
         
@@ -121,25 +120,6 @@ class StartupDialog(QDialog):
         settings_btn = QPushButton("Open Settings", self)
         settings_btn.clicked.connect(self._on_open_settings)
         layout.addWidget(settings_btn)
-        
-        layout.addStretch()
-        
-        return widget
-    
-    def _create_contribute_tab(self):
-        """Create contribute tab"""
-        widget = QWidget(self)
-        layout = QVBoxLayout(widget)
-        
-        contribute_label = QLabel(
-            "Help improve EpiGimp:\n\n"
-            "• Report bugs\n"
-            "• Suggest features\n"
-            "• Contribute code\n"
-            "• Create tutorials",
-            self
-        )
-        layout.addWidget(contribute_label)
         
         layout.addStretch()
         

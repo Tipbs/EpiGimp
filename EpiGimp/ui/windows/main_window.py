@@ -5,9 +5,11 @@ from PySide6.QtCore import Signal
 from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
 from EpiGimp.ui.widgets.export_widget import ExportWidget
 from EpiGimp.ui.dialogs.settings_dialog import SettingsDialog
+from EpiGimp.ui.dialogs.new_image_dialog import NewImageDialog
 from PySide6.QtGui import QResizeEvent, QCloseEvent
 from EpiGimp.ui.widgets.layers_widget import LayersWidget
 from EpiGimp.core.canva import Canva
+from EpiGimp.ui.dialogs.metadata_dialog import MetadataDialog, EditableMetadataDialog
 
 class MainWindow(QMainWindow):
     image_loaded = Signal(Canva)
@@ -84,13 +86,16 @@ class MainWindow(QMainWindow):
 
 
     def _create_actions(self):
+        self.new_act = QAction('New Project', self)
+        self.new_act.setShortcut(QKeySequence('Ctrl+N'))
+        self.new_act.triggered.connect(self.create_new_image)
         self.open_act = QAction('Open File in Project...', self)
         self.open_act.setShortcut(QKeySequence('Ctrl+O'))
-        self.open_act.triggered.connect(lambda: self.open_file(type=0))
+        self.open_act.triggered.connect(lambda: self.open_file(type=1))
 
         self.open_new_act = QAction('Open File in New Tab...', self)
         self.open_new_act.setShortcut(QKeySequence('Ctrl+Shift+O'))
-        self.open_new_act.triggered.connect(lambda: self.open_file(type=1))
+        self.open_new_act.triggered.connect(lambda: self.open_file(type=0))
         
         self.load_act = QAction('Load Project...', self)
         self.load_act.setShortcut(QKeySequence('Ctrl+L'))
@@ -111,11 +116,18 @@ class MainWindow(QMainWindow):
         self.fullscreen_act.setShortcut(QKeySequence('F11'))
         self.fullscreen_act.triggered.connect(self.toggle_fullscreen)
 
+        self.metadata_act = QAction('See Metadata...', self)
+        self.metadata_act.triggered.connect(self.show_metadata_dialog)
+
+        self.metadata_edit_act = QAction('Edit Metadata...', self)
+        self.metadata_edit_act.triggered.connect(self.edit_metadata_dialog)
+
         self.exit_act = QAction('Exit', self)
         self.exit_act.triggered.connect(self.close)
 
     def _create_menus(self):
         file_menu = self.menuBar().addMenu('File')
+        file_menu.addAction(self.new_act)
         file_menu.addAction(self.open_act)
         file_menu.addAction(self.open_new_act)
         file_menu.addAction(self.save_act)
@@ -127,11 +139,36 @@ class MainWindow(QMainWindow):
         display_menu = self.menuBar().addMenu('Display')
         display_menu.addAction(self.fullscreen_act)
 
+        image_menu = self.menuBar().addMenu('Image')
+        image_menu.addAction(self.metadata_act)
+        image_menu.addAction(self.metadata_edit_act)
+
     def toggle_fullscreen(self, checked):
         if checked:
             self.showFullScreen()
         else:
             self.showNormal()
+
+    def show_metadata_dialog(self):
+        canva = self.current_canva()
+        if canva is None:
+            QMessageBox.warning(self, "No Image", "No image is currently loaded.")
+            return
+        dialog = MetadataDialog(canva, self)
+        dialog.exec()
+
+    def edit_metadata_dialog(self):
+        canva = self.current_canva()
+        if canva is None:
+            QMessageBox.warning(self, "No Image", "No image is currently loaded.")
+            return
+        dialog = EditableMetadataDialog(canva, self)
+        dialog.exec()
+    
+    def create_new_image(self):
+        dialog = NewImageDialog(self)
+        dialog.image_created.connect(self.image_loaded.emit)
+        dialog.exec()
 
     def open_file(self, type: int = 0):
         path, _ = QFileDialog.getOpenFileName(self, 'Open image')
@@ -139,23 +176,27 @@ class MainWindow(QMainWindow):
             print("Can't open file")
             return
         self.image_loaded.emit(Canva.load_image(path))
-        # self.canvas.append(Canva.load_image(path))
 
     def save_file(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save image')
         if path:
             self.current_canva().save_project(path)
     
-    def load_project(self):
+    def load_project(self, type: int = 0):
         path, _ = QFileDialog.getOpenFileName(self, 'Load project', filter="EpiGimp Projects (*.epigimp)")
-        if path:
-            self.canvas.append(Canva.load_project(path))
+        if path is None or path == '':
+            print("Can't open project")
+            return
+        if type == 1:
+            self.image_loaded.emit(self.current_canva().add_img_layer(path))
+        else:
+            self.image_loaded.emit(Canva.from_project(path))
 
     def load_project_from_startup(self, path: str):
         if path is None or path == '':
             print("No last project to load")
             return
-        #self.canvas[self.canvas_widget.currentIndex()].load_project(path)
+        self.image_loaded.emit(Canva.from_project(path))
 
     def export_file(self):
         export_dialog = ExportWidget(self)
@@ -183,7 +224,7 @@ class MainWindow(QMainWindow):
         if general_settings.show_welcome_screen and type == 0:
             from EpiGimp.ui.widgets.startup_widget import StartupDialog
             welcome_dialog = StartupDialog(self.settings.settings_manager, self)
-            welcome_dialog.create_new_clicked.connect(lambda: self.open_file(type=0))
+            welcome_dialog.create_new_clicked.connect(lambda: self.create_new_image())
             welcome_dialog.open_existing_clicked.connect(lambda: self.open_file(type=1))
             welcome_dialog.open_recent_clicked.connect(lambda path: self.canvas.load_image(path, type=0))
             welcome_dialog.show()
