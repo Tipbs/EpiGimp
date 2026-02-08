@@ -1,6 +1,6 @@
-from PySide6.QtCore import Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
-from PySide6.QtGui import QImage, QPainter
+from PySide6.QtGui import QImage, QPainter, QPixmap
 
 from EpiGimp.core.fileio.loader_png import *
 
@@ -26,14 +26,15 @@ class CanvasWidget(QTabWidget):
 
 class CanvaWidget(QWidget):
     # drawing_changed = Signal()
-    layer_created = Signal(Canva)
+    layer_changed = Signal(Canva)
 
     def __init__(self, canva: Canva, parent=None):
         super().__init__(parent)
         self.canva: Canva = canva
-        self.layer_created.emit(canva)
+        self.canvas_buffer = QPixmap(*canva.shape[:2])
         self.setMinimumSize(400, 300)
-        self.layer_created.connect(self.paintEvent)
+        self.layer_changed.connect(self.draw_canva)
+        self.layer_changed.emit(canva)
         # self.setFocusPolicy(Qt.StrongFocus)  # Enable keyboard focus
         # self._image = QImage(800, 600, QImage.Format_RGBA8888)
         # self._image.fill(Qt.white)
@@ -70,7 +71,19 @@ class CanvaWidget(QWidget):
 
     def add_layer(self):
         self.canva.add_layer()
-        self.layer_created.emit(self.canva)
+        self.layer_changed.emit(self.canva)
+
+    def del_layer(self, idx: int):
+        if len(self.canva.layers) <= 0:
+            return
+        self.canva.del_layer(idx)
+        self.layer_changed.emit(self.canva)
+
+    def swap_layer(self, fst: int, snd: int):
+        if len(self.canva.layers) <= 0:
+            return
+        self.canva.swap_layer(fst, snd)
+        self.layer_changed.emit(self.canva)
 
     # def _toggle_drawing_mode(self):
     #     self._drawing = not self._drawing
@@ -116,60 +129,13 @@ class CanvaWidget(QWidget):
     #         super().keyPressEvent(event)
 
     def paintEvent(self, event):
-#         # Draw the base image or temp image if moving
-#         if self._temp_image is not None:
-#             painter.drawImage(self.rect(), self._temp_image)
-#         else:
-#             painter.drawImage(self.rect(), self._image)
-#
-#         # Draw selection rectangle
-#         if self._selection_mode and (self._selecting or self._has_selection):
-#             widget_rect = self.rect()
-#             canvas_w, canvas_h = self._canvas_size
-#             scale_x = widget_rect.width() / canvas_w
-#             scale_y = widget_rect.height() / canvas_h
-#
-#             # Convert selection rect to widget coordinates
-#             widget_selection = QRect(
-#                 int(self._selection_rect.x() * scale_x),
-#                 int(self._selection_rect.y() * scale_y),
-#                 int(self._selection_rect.width() * scale_x),
-#                 int(self._selection_rect.height() * scale_y)
-#             )
-#
-#             # Draw marching ants selection
-#             pen = QPen(Qt.black, 1, Qt.DashLine)
-#             painter.setPen(pen)
-#             painter.setBrush(Qt.NoBrush)
-#             painter.drawRect(widget_selection)
-#
-#             # Draw white dashes offset
-#             pen = QPen(Qt.white, 1, Qt.DashLine)
-#             pen.setDashOffset(4)
-#             painter.setPen(pen)
-#             painter.drawRect(widget_selection)
-#
-#         # Draw circle preview
-#         if self._circle_mode and self._circle_preview:
-#             pen = QPen(QColor(128, 128, 128, 128))
-#             pen.setWidth(2)
-#             painter.setPen(pen)
-#             painter.setBrush(Qt.NoBrush)
-#
-#             widget_rect = self.rect()
-#             canvas_w, canvas_h = self._canvas_size
-#             scale_x = widget_rect.width() / canvas_w
-#             scale_y = widget_rect.height() / canvas_h
-#
-#             preview_x = int(self._circle_start.x() * scale_x)
-#             preview_y = int(self._circle_start.y() * scale_y)
-#             preview_radius = int(self._circle_radius * scale_x)
-#
-#             painter.drawEllipse(QPoint(preview_x, preview_y), preview_radius, preview_radius)
-# Simple scaling to fit widget
-        # painter.drawImage(self.rect(), self._image)
-
         painter = QPainter(self)
+        
+        painter.drawPixmap(0, 0, self.canvas_buffer)
+
+    def draw_canva(self):
+        painter = QPainter(self.canvas_buffer)
+        self.canvas_buffer.fill(Qt.GlobalColor.white)
         np_img = self.get_img()
         h, w, _ = np_img.shape
         qimg = QImage(
@@ -180,6 +146,7 @@ class CanvaWidget(QWidget):
             QImage.Format.Format_RGBA8888
         ).copy()
         painter.drawImage(0, 0, qimg)
+        self.update()
 
     def load_image(self, path: str):
         # loader = FileLoader(path)

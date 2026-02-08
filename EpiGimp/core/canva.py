@@ -13,15 +13,34 @@ class Canva:
         self.layers: List[Layer] = []
         self.add_layer(name='Background', color=background)
         self.project_path = None
+        self.active_layer = None
+
+    def set_active_layer(self, idx):
+        self.active_layer = self.layers[idx]
+    
+    def swap_layer(self, fst: int, snd: int):
+        if 0 <= fst < len(self.layers) and 0 <= snd < len(self.layers):
+            temp = self.layers[fst]
+            self.layers[fst] = self.layers[snd]
+            self.layers[snd] = temp
+
+    def del_layer(self, idx):
+        del self.layers[idx]
+        if idx < len(self.layers):
+            self.active_layer = self.layers[idx]
+        else:
+            self.active_layer = self.layers[idx - 1]
 
 
     def add_layer(self, name: str = 'Layer', color=(0, 0, 0, 0)) -> Layer:
         layer = Layer(self.shape, color, name=name)
         self.layers.append(layer)
+        self.active_layer = layer
         return layer
 
     def add_layer_from_layer(self, layer: Layer) -> Layer:
         self.layers.append(layer)
+        self.active_layer = layer
         return layer
 
     def add_img_layer(self, img) -> Layer:
@@ -30,20 +49,20 @@ class Canva:
         return layer
 
     @classmethod
-    def from_img(cls, img):
-        layer = Layer.from_img(img)
+    def from_img(cls, img, name = "Layer"):
+        layer = Layer.from_img(img, name)
         canva = cls()
         canva.shape = layer.shape
         canva.layers: List[Layer] = []
+
         canva.add_layer_from_layer(layer)
         return canva
 
     @classmethod
     def load_image(cls, path: str):
-        canva = cls()
         img = LoaderPng(path).get_img()
-        canva.from_img(img)
-        canva = Canva.from_img(img)
+        canva = cls().from_img(img)
+        canva = Canva.from_img(img, path)
         return canva
 
 
@@ -75,9 +94,9 @@ class Canva:
         return canva
 
     def get_img(self) -> Layer:
+        if len(self.layers) == 0:
+            return Layer()
         return reduce(lambda x, y: Layer(pixels=(cv.addWeighted(x.get_pixels(), 1, y.get_pixels(), 1, 0.0))), self.layers)
-        # img = np.zeros((500, 500, 4), dtype=np.uint8)
-        return Layer(pixels=(img))
 
     def composite(self) -> np.ndarray:
 # very simple alpha composite: base over
