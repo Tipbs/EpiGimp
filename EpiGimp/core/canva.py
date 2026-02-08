@@ -280,3 +280,26 @@ class Canva:
         if 'xmp' not in self.metadata:
             self.metadata['xmp'] = {}
         self.metadata['xmp']['Xmp.xmp.ModifyDate'] = now.isoformat()
+    
+    def flip_horizontal(self):
+        for layer in self.layers:
+            layer.flip_horizontal()
+    
+    def flip_vertical(self):
+        for layer in self.layers:
+            layer.flip_vertical()
+    
+    def rotate_90_clockwise(self):
+        for layer in self.layers:
+            layer.rotate_90_clockwise()
+        self.shape = (self.shape[1], self.shape[0])
+    
+    def rotate_90_counterclockwise(self):
+        for layer in self.layers:
+            layer.rotate_90_counterclockwise()
+        self.shape = (self.shape[1], self.shape[0])
+    
+    def rotate_180(self):
+        for layer in self.layers:
+            layer.rotate_180()
+    

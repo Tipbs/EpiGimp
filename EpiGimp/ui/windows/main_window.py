@@ -93,9 +93,14 @@ class MainWindow(QMainWindow):
 
     def current_canva(self) -> Canva|None:
         # print(self.canvas_widget.count())
+        #if self.canvas_widget.count() == 0:
+            #return None
+        return self.canvas_widget.currentWidget().canva
+    
+    def current_canva_widget(self) -> CanvasWidget|None:
         if self.canvas_widget.count() == 0:
             return None
-        return self.canvas_widget.currentWidget().canva
+        return self.canvas_widget.currentWidget()
 
 
     def _create_actions(self):
@@ -105,23 +110,18 @@ class MainWindow(QMainWindow):
         self.open_act = QAction('Open File in Project...', self)
         self.open_act.setShortcut(QKeySequence('Ctrl+O'))
         self.open_act.triggered.connect(lambda: self.open_file(type=1))
-
         self.open_new_act = QAction('Open File in New Tab...', self)
         self.open_new_act.setShortcut(QKeySequence('Ctrl+Shift+O'))
         self.open_new_act.triggered.connect(lambda: self.open_file(type=0))
-        
         self.load_act = QAction('Load Project...', self)
         self.load_act.setShortcut(QKeySequence('Ctrl+L'))
         self.load_act.triggered.connect(self.load_project)
-
         self.save_act = QAction('Save As...', self)
         self.save_act.setShortcut(QKeySequence('Ctrl+S'))
         self.save_act.triggered.connect(self.save_file)
-        
         self.export_act = QAction('Export...', self)
         self.export_act.setShortcut(QKeySequence('Ctrl+E'))
         self.export_act.triggered.connect(self.export_file)
-
         self.settings_act = QAction('Settings...', self)
         self.settings_act.triggered.connect(self.open_settings)
 
@@ -131,9 +131,18 @@ class MainWindow(QMainWindow):
 
         self.metadata_act = QAction('See Metadata...', self)
         self.metadata_act.triggered.connect(self.show_metadata_dialog)
-
         self.metadata_edit_act = QAction('Edit Metadata...', self)
         self.metadata_edit_act.triggered.connect(self.edit_metadata_dialog)
+        self.flip_horizontal_act = QAction('Flip Horizontal', self)
+        self.flip_horizontal_act.triggered.connect(lambda: self.current_canva_widget().transform('flip_horizontal'))
+        self.flip_vertical_act = QAction('Flip Vertical', self)
+        self.flip_vertical_act.triggered.connect(lambda: self.current_canva_widget().transform('flip_vertical'))
+        self.rotate_act = QAction('Rotate 90° Clockwise', self)
+        self.rotate_act.triggered.connect(lambda: self.current_canva_widget().transform('rotate_90_clockwise'))
+        self._rotate_ccw_act = QAction('Rotate 90° Counterclockwise', self)
+        self._rotate_ccw_act.triggered.connect(lambda: self.current_canva_widget().transform('rotate_90_counterclockwise'))
+        self._rotate_180_act = QAction('Rotate 180°', self)
+        self._rotate_180_act.triggered.connect(lambda: self.current_canva_widget().transform('rotate_180'))
 
         self.exit_act = QAction('Exit', self)
         self.exit_act.triggered.connect(self.close)
@@ -155,6 +164,11 @@ class MainWindow(QMainWindow):
         image_menu = self.menuBar().addMenu('Image')
         image_menu.addAction(self.metadata_act)
         image_menu.addAction(self.metadata_edit_act)
+        transform_menu = image_menu.addMenu('Transform')
+        transform_menu.addAction(self.flip_horizontal_act)
+        transform_menu.addAction(self.flip_vertical_act)
+        transform_menu.addAction(self.rotate_act)
+
 
     def toggle_fullscreen(self, checked):
         if checked:
@@ -242,7 +256,8 @@ class MainWindow(QMainWindow):
             welcome_dialog.open_recent_clicked.connect(lambda path: self.canvas.load_image(path, type=0))
             welcome_dialog.show()
         if general_settings.last_project[0] and general_settings.last_project[1] and type == 0:
-            self.load_project_from_startup(general_settings.last_project[1]) 
+            if general_settings.last_project[1].endswith('.epigimp'):
+                self.load_project_from_startup(general_settings.last_project[1]) 
     
     def load_shortcuts_settings(self, shortcuts_settings, type: int = 0):
         # Map setting names to action attributes

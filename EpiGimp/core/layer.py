@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Tuple
-# import numpy.typing as npt
+import cv2 as cv
 
 
 class Layer:
@@ -46,3 +46,41 @@ class Layer:
 
     def toggle_visibility(self):
         self.visibility = not self.visibility
+
+    def flip_horizontal(self):
+        self.pixels = cv.flip(self.pixels, 1)
+    
+    def flip_vertical(self):
+        self.pixels = cv.flip(self.pixels, 0)
+    
+    def rotate_90_clockwise(self):
+        self.pixels = cv.rotate(self.pixels, cv.ROTATE_90_CLOCKWISE)
+        self.shape = (self.pixels.shape[0], self.pixels.shape[1])
+    
+    def rotate_90_counterclockwise(self):
+        self.pixels = cv.rotate(self.pixels, cv.ROTATE_90_COUNTERCLOCKWISE)
+        self.shape = (self.pixels.shape[0], self.pixels.shape[1])
+    
+    def rotate_180(self):
+        self.pixels = cv.rotate(self.pixels, cv.ROTATE_180)
+
+    def transform(self, matrix: np.ndarray = None, type: str = ""):
+        if type == "flip_horizontal":
+            self.flip_horizontal()
+        elif type == "flip_vertical":
+            self.flip_vertical()
+        elif type == "rotate_90_cw":
+            self.rotate_90_clockwise()
+        elif type == "rotate_90_ccw":
+            self.rotate_90_counterclockwise()
+        elif type == "rotate_180":
+            self.rotate_180()
+        elif matrix is not None:
+            h, w = self.shape
+            self.pixels = cv.warpAffine(
+                self.pixels, 
+                matrix, 
+                (w, h),
+                borderMode=cv.BORDER_CONSTANT,
+                borderValue=(0, 0, 0, 0)
+            )

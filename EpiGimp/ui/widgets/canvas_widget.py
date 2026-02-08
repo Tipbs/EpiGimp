@@ -548,3 +548,16 @@ class CanvaWidget(QWidget):
 # Convenience bridge to numpy (pixels as H x W x 4 uint8)
     def get_img(self):
         return self.canva.get_img().get_pixels()
+    
+    def transform(self, operation: str):
+        if operation == 'flip_horizontal':
+            self.canva.flip_horizontal()
+        elif operation == 'flip_vertical':
+            self.canva.flip_vertical()
+        elif operation == 'rotate_90_clockwise':
+            self.canva.rotate_90_clockwise()
+        elif operation == 'rotate_90_counterclockwise':
+            self.canva.rotate_90_counterclockwise()
+        elif operation == 'rotate_180':
+            self.canva.rotate_180()
+        self.update()

@@ -11,7 +11,7 @@ class FileLoader:
 
     def load_project(self) -> Tuple[List[Dict], Dict]:
         if self.file_format != '.epigimp':
-            raise ValueError(f"Projects can only be loaded from .epigimp format. Use other tools to import images.")
+            raise ValueError("Unsupported file format: {}".format(self.file_format))
         return self._load_native_format()
 
     def _load_native_format(self) -> Tuple[List[Dict], Dict]:
