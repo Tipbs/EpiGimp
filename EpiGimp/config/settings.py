@@ -63,9 +63,12 @@ class AppearanceSettings(Settings):
 class ShortcutsSettings(Settings):
     def __init__(self):
         self.shortcuts = {
-            'New Project': 'Ctrl+N',
-            'Open Project': 'Ctrl+O',
+            'New Image': 'Ctrl+N',
+            'Open File in Project': 'Ctrl+O',
+            'Open File in New Tab': 'Ctrl+Shift+O',
+            'Load Project': 'Ctrl+L',
             'Save Project': 'Ctrl+S',
+            'Export': 'Ctrl+E'
         }
     
     def save(self, qsettings: QSettings):
