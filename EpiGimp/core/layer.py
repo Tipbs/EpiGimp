@@ -25,6 +25,18 @@ class Layer:
                 rgba[..., 3] = 255
                 self.pixels = rgba
 
+        self.qimage = QImage(
+            self.pixels.data, 
+            self.width, 
+            self.height, 
+            self.width * 4,  # Bytes per line (stride)
+            QImage.Format_RGBA8888
+        )
+
+    def get_painter(self):
+        """Returns a QPainter active on THIS layer"""
+        return QPainter(self.qimage)
+
     @classmethod
     def from_img(cls, img, name: str = "Layer"):
         layer = cls(img.shape, pixels=img, name=name)
