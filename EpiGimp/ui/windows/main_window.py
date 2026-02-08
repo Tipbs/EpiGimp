@@ -39,6 +39,10 @@ class MainWindow(QMainWindow):
         self.canvas_widget.currentChanged.connect(lambda index: self.layers_widget.set_canva(self.current_canva()))
         self.image_loaded.connect(self.canvas_widget.add_canva)
         self.layers_widget.btn_add.clicked.connect(self.add_layer)
+        self.layers_widget.btn_del.clicked.connect(lambda: self.del_layer(self.layers_widget.list_widget.currentRow()))
+        self.layers_widget.btn_up.clicked.connect(lambda: self.swap_layer(self.layers_widget.list_widget.currentRow(), self.layers_widget.list_widget.currentRow() - 1))
+        self.layers_widget.btn_down.clicked.connect(lambda: self.swap_layer(self.layers_widget.list_widget.currentRow(), self.layers_widget.list_widget.currentRow() + 1))
+        self.layers_widget.list_widget.currentItemChanged.connect(lambda: self.current_canva().set_active_layer(self.layers_widget.list_widget.currentRow()))
         self.canvas_widget.currentChanged.connect(self.canva_update)
         layout.addWidget(self.canvas_widget)
         layout.addWidget(self.layers_widget)
@@ -70,13 +74,22 @@ class MainWindow(QMainWindow):
 
     def canva_update(self):
         self.layers_widget.update_layer_from_canva(self.canvas_widget.currentWidget().canva)
-        self.canvas_widget.currentWidget().layer_created.connect(self.layers_widget.update_layer_from_canva)
+        self.canvas_widget.currentWidget().layer_changed.connect(self.layers_widget.update_layer_from_canva)
 
+    def swap_layer(self, fst: int, snd: int):
+        if self.canvas_widget.count() == 0:
+            return None
+        self.canvas_widget.currentWidget().swap_layer(fst, snd)
 
     def add_layer(self):
         if self.canvas_widget.count() == 0:
             return None
         self.canvas_widget.currentWidget().add_layer()
+
+    def del_layer(self, idx):
+        if self.canvas_widget.count() == 0:
+            return None
+        self.canvas_widget.currentWidget().del_layer(idx)
 
     def current_canva(self) -> Canva|None:
         # print(self.canvas_widget.count())

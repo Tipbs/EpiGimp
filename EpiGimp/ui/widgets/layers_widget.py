@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, 
-                             QListWidget, QListWidgetItem, QPushButton, QFrame, QAbstractItemView)
+                             QListWidget, QListWidgetItem, QPushButton, QFrame)
 from PySide6.QtCore import Signal
 from EpiGimp.core.layer import Layer
 from EpiGimp.ui.widgets.layer_item_widget import LayerItemWidget
@@ -28,16 +28,20 @@ class LayersWidget(QFrame):
 
         # The List Container
         self.list_widget = QListWidget()
-        self.list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove) # Allows reordering
-        self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.list_widget.setStyleSheet("QListWidget::item { border-bottom: 1px solid #333; }")
+        # self.list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove) # Allows reordering
+        # self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        # self.list_widget.setStyleSheet("QListWidget::item { border-bottom: 1px solid #333; }")
 
         # Bottom Toolbar (Add/Delete/Move)
         self.toolbar = QHBoxLayout()
         self.btn_add = QPushButton("+")
         self.btn_del = QPushButton("-")
+        self.btn_up = QPushButton("↑")
+        self.btn_down = QPushButton("↓")
         self.toolbar.addWidget(self.btn_add)
         self.toolbar.addWidget(self.btn_del)
+        self.toolbar.addWidget(self.btn_up)
+        self.toolbar.addWidget(self.btn_down)
         self.toolbar.addStretch()
 
         self.main_layout.addWidget(self.list_widget)
@@ -52,17 +56,18 @@ class LayersWidget(QFrame):
         self.canva = canva
 
     def update_layer_from_canva(self, canva: Canva):
+        active_layer = canva.active_layer
         self.list_widget.clear()
         for layer in canva.layers:
             item = QListWidgetItem(self.list_widget)
-            custom_widget = LayerItemWidget("Layer", layer)
+            custom_widget = LayerItemWidget(layer.name, layer)
 
-            # Ensure the list item is large enough for our custom widget
             item.setSizeHint(custom_widget.sizeHint())
 
-            self.list_widget.insertItem(0, item) # GIMP adds to top
+            self.list_widget.insertItem(0, item)
             self.list_widget.setItemWidget(item, custom_widget)
-            self.list_widget.setCurrentItem(item)
+            if layer == active_layer:
+                self.list_widget.setCurrentItem(item)
 
 
     def add_layer(self, name, thumbnail=None):
