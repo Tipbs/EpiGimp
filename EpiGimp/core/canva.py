@@ -116,11 +116,32 @@ class Canva:
         canva._init_metadata()
         return canva
 
+    def composite_different_sizes(self, layer, position=(0, 0)) -> Image:
+        """
+        Composites a small image onto a large background at a specific (x, y) position.
+        """
+        # 1. Create a transparent canvas the same size as the background
+        # "RGBA" ensures it has transparency. (0, 0, 0, 0) is fully transparent.
+        layer_canvas = Image.new("RGBA", (self.shape[1], self.shape[0]), (0, 0, 0, 0))
+        
+        # 2. Paste the small image into this canvas at the desired position
+        layer_canvas.paste(layer.get_pil(), position)
+        
+        # 3. Now both images are the same size, so alpha_composite works!
+        return layer_canvas
+
+    def get_image_for_compisition(self, layer) -> Image:
+        if not layer.visibility:
+            return Layer(self.shape).get_pil()
+        if layer.shape != self.shape:
+            return self.composite_different_sizes(layer)
+        return layer.get_pil()
+
     def get_img(self) -> Layer:
         if len(self.layers) == 0:
             return Layer(self.shape)
-        return reduce(lambda x, y: Layer(pixels=(np.array(Image.alpha_composite(x.get_pil() if x.visibility else Layer(self.shape).get_pil(),
-                                                                                y.get_pil() if y.visibility else Layer(self.shape).get_pil())))), self.layers)
+        return reduce(lambda x, y: Layer(pixels=(np.array(Image.alpha_composite(self.get_image_for_compisition(x),
+                                                                                self.get_image_for_compisition(y))))), self.layers)
 
     def composite(self) -> np.ndarray:
 # very simple alpha composite: base over
