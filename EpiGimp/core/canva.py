@@ -62,8 +62,10 @@ class Canva:
         self.active_layer = layer
         return layer
 
-    def add_img_layer(self, img) -> Layer:
-        layer = Layer.from_img(img)
+    def add_img_layer(self, img, name = None) -> Layer:
+        if not name:
+            name = self.default_name()
+        layer = Layer.from_img(img, name)
         self.add_layer_from_layer(layer)
         return layer
 
@@ -71,7 +73,7 @@ class Canva:
     def from_img(cls, img, name = "Layer"):
         layer = Layer.from_img(img, name)
         canva = cls()
-        canva.shape = layer.shape
+        canva.shape = (layer.shape[1], layer.shape[0])
         canva.layers: List[Layer] = []
 
         canva.add_layer_from_layer(layer)
@@ -122,7 +124,7 @@ class Canva:
         """
         # 1. Create a transparent canvas the same size as the background
         # "RGBA" ensures it has transparency. (0, 0, 0, 0) is fully transparent.
-        layer_canvas = Image.new("RGBA", (self.shape[1], self.shape[0]), (0, 0, 0, 0))
+        layer_canvas = Image.new("RGBA", self.shape, (0, 0, 0, 0))
         
         # 2. Paste the small image into this canvas at the desired position
         layer_canvas.paste(layer.get_pil(), position)
@@ -133,7 +135,8 @@ class Canva:
     def get_image_for_compisition(self, layer) -> Image:
         if not layer.visibility:
             return Layer(self.shape).get_pil()
-        if layer.shape != self.shape:
+        shape = (layer.shape[1], layer.shape[0])
+        if shape != self.shape:
             return self.composite_different_sizes(layer)
         return layer.get_pil()
 

@@ -87,7 +87,7 @@ class CanvaWidget(QWidget):
     
     def import_image_as_layer(self, path: str):
         img = LoaderPng(path).get_img()
-        self.canva.add_img_layer(img)
+        self.canva.add_img_layer(img, path)
         self.layer_changed.emit(self.canva)
 
     def del_layer(self, idx: int):
