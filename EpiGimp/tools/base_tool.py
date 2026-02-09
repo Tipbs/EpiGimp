@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 from PySide6.QtCore import QPoint
 
+from EpiGimp.core.layer import Layer
+
 class BaseTool(ABC):
-    def __init__(self, name: str = 'tool'):
+    def __init__(self, name: str = 'tool', tooltip: str = 'tooltip'):
         self.name = name
+        self.tooltip = tooltip
         self.is_drawing = False
 
 
@@ -15,10 +18,17 @@ class BaseTool(ABC):
         self.is_drawing = False
 
 
-    def mouse_move(self, pos: QPoint):
-        pass
-
+    def mouse_move(self, pos: QPoint, layer: Layer):
+        if not self.is_drawing:
+            return
 
     @abstractmethod
-    def apply(self, document, layer_index=0, **kwargs):
+    def apply(self, pos: QPoint, layer: Layer):
+        raise NotImplementedError
+
+class ToolNotImplemented(BaseTool):
+    def __init__(self):
+        super().__init__()
+
+    def apply(self, pos: QPoint, layer: Layer):
         raise NotImplementedError
