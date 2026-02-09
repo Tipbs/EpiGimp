@@ -60,6 +60,12 @@ class Layer:
     def get_visibility(self):
         return self.visibility
 
+    def set_visibility(self, state: Bool):
+        self.visibility = state
+
+    def set_name(self, name: Bool):
+        self.name = name
+
     def toggle_visibility(self):
         self.visibility = not self.visibility
 
@@ -79,6 +85,55 @@ class Layer:
     
     def rotate_180(self):
         self.pixels = cv.rotate(self.pixels, cv.ROTATE_180)
+    
+    def kelvin_to_rgb(self, kelvin):
+        temp = kelvin / 100.0
+        
+        if temp <= 66:
+            red = 255
+        else:
+            red = temp - 60
+            red = 329.698727446 * (red ** -0.1332047592)
+            red = max(0, min(255, red))
+        
+        if temp <= 66:
+            green = temp
+            green = 99.4708025861 * np.log(green) - 161.1195681661
+        else:
+            green = temp - 60
+            green = 288.1221695283 * (green ** -0.0755148492)
+        green = max(0, min(255, green))
+        
+        if temp >= 66:
+            blue = 255
+        elif temp <= 19:
+            blue = 0
+        else:
+            blue = temp - 10
+            blue = 138.5177312231 * np.log(blue) - 305.0447927307
+            blue = max(0, min(255, blue))
+        
+        return np.array([red, green, blue], dtype=np.float32)
+    
+    def adjust_color_temperature(self, original_temp=6500, target_temp=6500, opacity=1.0):
+        if original_temp == target_temp or opacity == 0:
+            return
+        
+        original_rgb = self.kelvin_to_rgb(original_temp) / 255.0
+        target_rgb = self.kelvin_to_rgb(target_temp) / 255.0
+        
+        scale = target_rgb / (original_rgb + 1e-6)
+        
+        rgb = self.pixels[:, :, :3].astype(np.float32)
+        
+        adjusted = rgb * scale[np.newaxis, np.newaxis, :]
+        adjusted = np.clip(adjusted, 0, 255)
+        
+        if opacity < 1.0:
+            result = rgb * (1 - opacity) + adjusted * opacity
+            self.pixels[:, :, :3] = result.astype(np.uint8)
+        else:
+            self.pixels[:, :, :3] = adjusted.astype(np.uint8)
 
     def transform(self, matrix: np.ndarray = None, type: str = ""):
         if type == "flip_horizontal":

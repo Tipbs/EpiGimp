@@ -1,6 +1,7 @@
+from __future__ import annotations
 from PySide6.QtCore import Qt, QPoint, Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
-from PySide6.QtGui import QImage, QPainter, QPixmap
+from PySide6.QtGui import QImage, QPainter, QPixmap, QMouseEvent
 
 from EpiGimp.core.fileio.loader_png import *
 
@@ -24,7 +25,7 @@ class CanvasWidget(QTabWidget):
         # self.setCurrentWidget(self.canvas_widget[index])
         pass
 
-    def mouseMoveEvent(self, event: PySide6.QtGui.QMouseEvent, /) -> None:
+    def mouseMoveEvent(self, event: QMouseEvent, /) -> None:
         self.mouse_moved.emit(event.position().toPoint())
         super().mouseMoveEvent(event)
         self.currentWidget().update()
@@ -36,7 +37,6 @@ class CanvasWidget(QTabWidget):
 
 
 class CanvaWidget(QWidget):
-    # drawing_changed = Signal()
     layer_changed = Signal(Canva)
 
     def __init__(self, canva: Canva, parent=None):
@@ -44,13 +44,14 @@ class CanvaWidget(QWidget):
         self.canva: Canva = canva
         self.canvas_buffer = QPixmap(*canva.shape[:2])
         self.setMinimumSize(400, 300)
+        
+        self.canva_selected = 0
+        self.original_temp = 6500.0
+        self.target_temp = 6500.0
+        
         self.layer_changed.connect(self.draw_canva)
         self.layer_changed.emit(canva)
-        # self.setFocusPolicy(Qt.StrongFocus)  # Enable keyboard focus
-        # self._image = QImage(800, 600, QImage.Format_RGBA8888)
-        # self._image.fill(Qt.white)
-        # self.canvas: List[Canva] = []
-        self.canva_selected = 0
+        
         # self._image = QImage(800, 600, QImage.Format_RGBA8888)
         # self._image.fill(Qt.white)
         # self._canvas_size = self._image.size().toTuple()
@@ -82,6 +83,11 @@ class CanvaWidget(QWidget):
 
     def add_layer(self):
         self.canva.add_layer()
+        self.layer_changed.emit(self.canva)
+    
+    def import_image_as_layer(self, path: str):
+        img = LoaderPng(path).get_img()
+        self.canva.add_img_layer(img)
         self.layer_changed.emit(self.canva)
 
     def del_layer(self, idx: int):
@@ -572,3 +578,19 @@ class CanvaWidget(QWidget):
         elif operation == 'rotate_180':
             self.canva.rotate_180()
         self.update()
+    
+    def adjust_color_temperature(self, original_temp=6500, target_temp=6500, opacity=1.0):
+        self.original_temp = original_temp
+        self.target_temp = target_temp
+        self.canva.adjust_color_temperature(original_temp, target_temp, opacity)
+        self.update()
+    
+    def get_temperature_settings(self):
+        return {
+            'original_temp': self.original_temp,
+            'target_temp': self.target_temp
+        }
+    
+    def set_temperature_settings(self, original_temp, target_temp):
+        self.original_temp = original_temp
+        self.target_temp = target_temp

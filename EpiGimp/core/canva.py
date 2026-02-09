@@ -10,6 +10,7 @@ from typing import Tuple
 from datetime import datetime
 
 class Canva:
+    count = 0
     def __init__(self, shape: Tuple[int, int] = (600, 800), background=(0, 0, 0, 255)):
         self.shape = shape
         self.layers: List[Layer] = []
@@ -19,11 +20,17 @@ class Canva:
         self.metadata: Dict[str, Any] = {}
         self._init_metadata()
 
+    def default_name(self):
+        name =  f"Layer #{self.count}"
+        self.count +=1
+        return name
+
     def set_active_layer(self, idx):
         if not len(self.layers):
             self.active_layer = None
             return
-        self.active_layer = self.layers[idx]
+        if 0 <= idx < len(self.layers):
+            self.active_layer = self.layers[idx]
     
     def swap_layer(self, fst: int, snd: int):
         if 0 <= fst < len(self.layers) and 0 <= snd < len(self.layers):
@@ -41,9 +48,10 @@ class Canva:
             self.active_layer = self.layers[idx]
         else:
             self.active_layer = self.layers[idx - 1]
-        print(len(self.layers))
 
-    def add_layer(self, name: str = 'Layer', color=(0, 0, 0, 0)) -> Layer:
+    def add_layer(self, name: str = None, color=(0, 0, 0, 0)) -> Layer:
+        if not name:
+            name = self.default_name()
         layer = Layer(self.shape, color, name=name)
         self.layers.append(layer)
         self.active_layer = layer
@@ -110,8 +118,9 @@ class Canva:
 
     def get_img(self) -> Layer:
         if len(self.layers) == 0:
-            return Layer()
-        return reduce(lambda x, y: Layer(pixels=(np.array(Image.alpha_composite(x.get_pil(), y.get_pil())))), self.layers)
+            return Layer(self.shape)
+        return reduce(lambda x, y: Layer(pixels=(np.array(Image.alpha_composite(x.get_pil() if x.visibility else Layer(self.shape).get_pil(),
+                                                                                y.get_pil() if y.visibility else Layer(self.shape).get_pil())))), self.layers)
 
     def composite(self) -> np.ndarray:
 # very simple alpha composite: base over
@@ -312,3 +321,10 @@ class Canva:
         for layer in self.layers:
             layer.rotate_180()
     
+    def adjust_color_temperature(self, original_temp=6500, target_temp=6500, opacity=1.0, layer_idx=None):
+        if layer_idx is not None:
+            if 0 <= layer_idx < len(self.layers):
+                self.layers[layer_idx].adjust_color_temperature(original_temp, target_temp, opacity)
+        else:
+            for layer in self.layers:
+                layer.adjust_color_temperature(original_temp, target_temp, opacity)
