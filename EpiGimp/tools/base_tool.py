@@ -4,10 +4,10 @@ from PySide6.QtCore import QPoint
 from EpiGimp.core.layer import Layer
 
 class BaseTool(ABC):
-    def __init__(self, name: str = 'tool'):
+    def __init__(self, name: str = 'tool', tooltip: str = 'tooltip'):
         self.name = name
+        self.tooltip = tooltip
         self.is_drawing = False
-        self.sprite
 
 
     def mouse_press(self, pos: QPoint):
@@ -22,8 +22,13 @@ class BaseTool(ABC):
         if not self.is_drawing:
             return
 
-
-
     @abstractmethod
-    def apply(self, document, layer_index=0, **kwargs):
+    def apply(self, pos: QPoint, layer: Layer):
+        raise NotImplementedError
+
+class ToolNotImplemented(BaseTool):
+    def __init__(self):
+        super().__init__()
+
+    def apply(self, pos: QPoint, layer: Layer):
         raise NotImplementedError

@@ -1,7 +1,8 @@
+from PySide6.QtGui import QImage
 import numpy as np
 from typing import Tuple
 import cv2 as cv
-
+from PIL import Image
 
 class Layer:
     def __init__(
@@ -27,9 +28,9 @@ class Layer:
 
         self.qimage = QImage(
             self.pixels.data, 
-            self.width, 
-            self.height, 
-            self.width * 4,  # Bytes per line (stride)
+            self.shape[1], 
+            self.shape[0], 
+            self.shape[1] * 4,  # Bytes per line (stride)
             QImage.Format_RGBA8888
         )
 
@@ -52,6 +53,9 @@ class Layer:
 
     def get_pixels(self):
         return self.pixels
+
+    def get_pil(self):
+        return Image.fromarray(self.pixels.astype('uint8'))
 
     def get_visibility(self):
         return self.visibility
