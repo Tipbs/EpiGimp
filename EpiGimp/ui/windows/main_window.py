@@ -10,6 +10,7 @@ from PySide6.QtGui import QResizeEvent, QCloseEvent
 from EpiGimp.ui.widgets.layers_widget import LayersWidget
 from EpiGimp.core.canva import Canva
 from EpiGimp.ui.dialogs.metadata_dialog import MetadataDialog, EditableMetadataDialog
+from EpiGimp.ui.widgets.tools_widget import ToolsWidget
 
 class MainWindow(QMainWindow):
     image_loaded = Signal(Canva)
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(layers)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(2)
-        layout.addWidget(self.layers_widget)
+        # layout.addWidget(self.layers_widget)
         # layout.addWidget(self.input_line)
         self.dock_widget.setWidget(layers)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_widget)
@@ -42,10 +43,16 @@ class MainWindow(QMainWindow):
         self.layers_widget.btn_del.clicked.connect(lambda: self.del_layer(self.layers_widget.list_widget.currentRow()))
         self.layers_widget.btn_up.clicked.connect(lambda: self.swap_layer(self.layers_widget.list_widget.currentRow(), self.layers_widget.list_widget.currentRow() - 1))
         self.layers_widget.btn_down.clicked.connect(lambda: self.swap_layer(self.layers_widget.list_widget.currentRow(), self.layers_widget.list_widget.currentRow() + 1))
-        self.layers_widget.list_widget.currentItemChanged.connect(lambda: self.current_canva().set_active_layer(self.layers_widget.list_widget.currentRow()))
+        self.layers_widget.list_widget.currentItemChanged.connect(self.change_canva)
         self.canvas_widget.currentChanged.connect(self.canva_update)
-        layout.addWidget(self.canvas_widget)
-        layout.addWidget(self.layers_widget)
+        layer_dock = QDockWidget("Layers", self)
+        layer_dock.setWidget(self.layers_widget)
+        layer_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.addDockWidget(Qt.RightDockWidgetArea, layer_dock)
+
+        # layout.addWidget(self.canvas_widget)
+        self.setCentralWidget(self.canvas_widget)
+        # layout.addWidget(self.layers_widget)
         # self.canvas._drawButton = QPushButton("Draw", self)
         # self.canvas._drawButton.move(10, 10)
         # self.canvas._drawButton.clicked.connect(self.canvas._toggle_drawing_mode)
@@ -72,35 +79,53 @@ class MainWindow(QMainWindow):
         #self.resize(self.settings.get('window', {}).get('width', 1200),
         #self.settings.get('window', {}).get('height', 800))
 
+        self.tools_panel = ToolsWidget()
+        tools_dock = QDockWidget("Toolbox", self)
+        tools_dock.setWidget(self.tools_panel)
+        tools_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.addDockWidget(Qt.LeftDockWidgetArea, tools_dock)
+        self.canvas_widget.mouse_moved.connect(self.drawing)
+    
+    def change_canva(self):
+        if not len(self.current_canva_widget().canva.layers):
+            return None
+        return self.current_canva().set_active_layer(self.layers_widget.list_widget.currentRow())
+
+    def drawing(self, pos):
+        if not self.current_canva_widget():
+            return
+        self.tools_panel.get_current_tool().apply(pos, self.current_canva().active_layer)
+        self.current_canva_widget().draw_canva()
+
     def canva_update(self):
-        self.layers_widget.update_layer_from_canva(self.canvas_widget.currentWidget().canva)
-        self.canvas_widget.currentWidget().layer_changed.connect(self.layers_widget.update_layer_from_canva)
+        self.layers_widget.update_layer_from_canva(self.current_canva_widget().canva)
+        self.current_canva_widget().layer_changed.connect(self.layers_widget.update_layer_from_canva)
 
     def swap_layer(self, fst: int, snd: int):
         if self.canvas_widget.count() == 0:
             return None
-        self.canvas_widget.currentWidget().swap_layer(fst, snd)
+        self.current_canva_widget().swap_layer(fst, snd)
 
     def add_layer(self):
         if self.canvas_widget.count() == 0:
             return None
-        self.canvas_widget.currentWidget().add_layer()
+        self.current_canva_widget().add_layer()
 
     def del_layer(self, idx):
         if self.canvas_widget.count() == 0:
             return None
-        self.canvas_widget.currentWidget().del_layer(idx)
+        self.current_canva_widget().del_layer(idx)
 
     def current_canva(self) -> Canva|None:
         # print(self.canvas_widget.count())
-        #if self.canvas_widget.count() == 0:
-            #return None
-        return self.canvas_widget.currentWidget().canva
+        if not self.current_canva_widget():
+            return None
+        return self.current_canva_widget().canva
     
     def current_canva_widget(self) -> CanvasWidget|None:
         if self.canvas_widget.count() == 0:
             return None
-        return self.canvas_widget.currentWidget()
+        return self.canvas_widget.current_canva_widget()
 
 
     def _create_actions(self):

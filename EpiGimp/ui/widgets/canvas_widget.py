@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import QPoint, Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
 from PySide6.QtGui import QImage, QPainter, QPixmap
 
@@ -7,6 +7,7 @@ from EpiGimp.core.fileio.loader_png import *
 from EpiGimp.core.canva import Canva
 
 class CanvasWidget(QTabWidget):
+    mouse_moved = Signal(QPoint)
     def __init__(self, parent=None):
         super().__init__(parent)
         # self.canvas_widget: List[CanvaWidget] = canvas
@@ -22,6 +23,16 @@ class CanvasWidget(QTabWidget):
     def handleCurrentChanged(self, index):
         # self.setCurrentWidget(self.canvas_widget[index])
         pass
+
+    def mouseMoveEvent(self, event: PySide6.QtGui.QMouseEvent, /) -> None:
+        self.mouse_moved.emit(event.position().toPoint())
+        super().mouseMoveEvent(event)
+        self.currentWidget().update()
+
+    def current_canva_widget(self) -> CanvaWidget:
+        if self.currentWidget():
+            return self.currentWidget()
+        return None
 
 
 class CanvaWidget(QWidget):
@@ -70,7 +81,6 @@ class CanvaWidget(QWidget):
         # self._clipboard = None
 
     def add_layer(self):
-        self.canva.add_layer()
         self.layer_changed.emit(self.canva)
 
     def del_layer(self, idx: int):
@@ -128,6 +138,7 @@ class CanvaWidget(QWidget):
     #     else:
     #         super().keyPressEvent(event)
 
+
     def paintEvent(self, event):
         painter = QPainter(self)
         
@@ -135,7 +146,7 @@ class CanvaWidget(QWidget):
 
     def draw_canva(self):
         painter = QPainter(self.canvas_buffer)
-        self.canvas_buffer.fill(Qt.GlobalColor.white)
+        # self.canvas_buffer.fill(Qt.GlobalColor.white)
         np_img = self.get_img()
         h, w, _ = np_img.shape
         qimg = QImage(

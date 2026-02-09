@@ -1,6 +1,7 @@
 from functools import reduce
 from typing import List, Dict, Any
 import cv2 as cv
+from PIL import Image
 
 from EpiGimp.core.fileio.loader_png import LoaderPng
 from .layer import Layer
@@ -9,7 +10,7 @@ from typing import Tuple
 from datetime import datetime
 
 class Canva:
-    def __init__(self, shape: Tuple[int, int] = (600, 800), background=(255, 255, 255, 255)):
+    def __init__(self, shape: Tuple[int, int] = (600, 800), background=(0, 0, 0, 255)):
         self.shape = shape
         self.layers: List[Layer] = []
         self.active_layer = None
@@ -19,6 +20,8 @@ class Canva:
         self._init_metadata()
 
     def set_active_layer(self, idx):
+        if not len(self.layers):
+            self.active_layer = None
         self.active_layer = self.layers[idx]
     
     def swap_layer(self, fst: int, snd: int):
@@ -29,7 +32,9 @@ class Canva:
 
     def del_layer(self, idx):
         del self.layers[idx]
-        if idx < len(self.layers):
+        if not len(self.layers):
+            self.active_layer = None
+        elif idx < len(self.layers):
             self.active_layer = self.layers[idx]
         else:
             self.active_layer = self.layers[idx - 1]
@@ -102,7 +107,7 @@ class Canva:
     def get_img(self) -> Layer:
         if len(self.layers) == 0:
             return Layer()
-        return reduce(lambda x, y: Layer(pixels=(cv.addWeighted(x.get_pixels(), 1, y.get_pixels(), 1, 0.0))), self.layers)
+        return reduce(lambda x, y: Layer(pixels=(np.array(Image.alpha_composite(x.get_pil(), y.get_pil())))), self.layers)
 
     def composite(self) -> np.ndarray:
 # very simple alpha composite: base over

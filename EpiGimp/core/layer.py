@@ -1,7 +1,8 @@
+from PySide6.QtGui import QImage
 import numpy as np
 from typing import Tuple
 import cv2 as cv
-
+from PIL import Image
 
 class Layer:
     def __init__(
@@ -25,6 +26,18 @@ class Layer:
                 rgba[..., 3] = 255
                 self.pixels = rgba
 
+        self.qimage = QImage(
+            self.pixels.data, 
+            self.shape[1], 
+            self.shape[0], 
+            self.shape[1] * 4,  # Bytes per line (stride)
+            QImage.Format_RGBA8888
+        )
+
+    def get_painter(self):
+        """Returns a QPainter active on THIS layer"""
+        return QPainter(self.qimage)
+
     @classmethod
     def from_img(cls, img, name: str = "Layer"):
         layer = cls(img.shape, pixels=img, name=name)
@@ -40,6 +53,9 @@ class Layer:
 
     def get_pixels(self):
         return self.pixels
+
+    def get_pil(self):
+        return Image.fromarray(self.pixels.astype('uint8'))
 
     def get_visibility(self):
         return self.visibility
