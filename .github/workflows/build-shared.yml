@@ -45,21 +45,21 @@ jobs:
             - name: Package application with PyInstaller
               run: |
                     pip install pyinstaller
-                    pyinstaller main.spec
+                    pyinstaller main.py
             
             - name: Upload artifact (Linux)
               uses: actions/upload-artifact@v6
               if: runner.os == 'Linux'
               with:
                     name: EpiGimp-Linux
-                    path: dist/EpiGimp
+                    path: dist/main/main
             
             - name: Upload artifact (Windows)
               uses: actions/upload-artifact@v6
               if: runner.os == 'Windows'
               with:
                     name: EpiGimp-Windows
-                    path: dist/EpiGimp.exe
+                    path: dist/main/main.exe
             
             - name: Run tests
               if: false
