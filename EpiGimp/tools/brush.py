@@ -1,8 +1,9 @@
 # from EpiGimp.tools.base_tool import BaseTool
 
-from PySide6.QtCore import QRectF
+from PySide6.QtCore import QRectF, QPoint
 from PySide6.QtGui import QPainter, QPixmap, Qt
 
+from EpiGimp.core.layer import Layer
 from EpiGimp.tools.base_tool import BaseTool
 
 

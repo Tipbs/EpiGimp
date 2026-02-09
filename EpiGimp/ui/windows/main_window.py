@@ -197,6 +197,8 @@ class MainWindow(QMainWindow):
         transform_menu.addAction(self.flip_horizontal_act)
         transform_menu.addAction(self.flip_vertical_act)
         transform_menu.addAction(self.rotate_act)
+        transform_menu.addAction(self._rotate_ccw_act)
+        transform_menu.addAction(self._rotate_180_act)
 
         color_menu = self.menuBar().addMenu('Color')
         color_menu.addAction(self._temp_adjust_act)

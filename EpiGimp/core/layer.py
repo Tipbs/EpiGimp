@@ -124,14 +124,16 @@ class Layer:
         
         scale = target_rgb / (original_rgb + 1e-6)
         
-        rgb = self.pixels[:, :, :3].astype(np.float32) / 255.0
+        rgb = self.pixels[:, :, :3].astype(np.float32)
         
         adjusted = rgb * scale[np.newaxis, np.newaxis, :]
-        adjusted = np.clip(adjusted, 0, 1)
+        adjusted = np.clip(adjusted, 0, 255)
         
-        result = rgb * (1 - opacity) + adjusted * opacity
-        
-        self.pixels[:, :, :3] = (result * 255).astype(np.uint8)
+        if opacity < 1.0:
+            result = rgb * (1 - opacity) + adjusted * opacity
+            self.pixels[:, :, :3] = result.astype(np.uint8)
+        else:
+            self.pixels[:, :, :3] = adjusted.astype(np.uint8)
 
     def transform(self, matrix: np.ndarray = None, type: str = ""):
         if type == "flip_horizontal":

@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                                QPushButton, QSlider, QSpinBox, QCheckBox,
                                QComboBox, QGroupBox, QWidget)
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtGui import QPixmap, QImage
 import numpy as np
 
@@ -16,10 +16,15 @@ class ColorTemperatureDialog(QDialog):
         self.target_temp = 6500.0
         self.original_pixels = None
         
+        self.update_timer = QTimer(self)
+        self.update_timer.setSingleShot(True)
+        self.update_timer.timeout.connect(self._do_update_preview)
+        
         if self.canva_widget:
             canva = self.canva_widget.canva
-            active_layer_idx = canva.layers.index(canva.get_img()) if canva.layers else 0
-            self.original_pixels = canva.layers[active_layer_idx].pixels.copy()
+            active_layer = canva.get_img()
+            if active_layer:
+                self.original_pixels = active_layer.pixels.copy()
         
         self.setWindowTitle("Température de couleur")
         self.setModal(True)
@@ -246,9 +251,33 @@ class ColorTemperatureDialog(QDialog):
         self._restore_original()
     
     def _on_accept(self):
+        self.update_timer.stop()
+        
+        if self.canva_widget and self.original_pixels is not None:
+            canva = self.canva_widget.canva
+            active_layer = canva.get_img()
+            
+            if active_layer:
+                opacity = self.opacity_spinbox.value() / 100.0
+                
+                active_layer.pixels = self.original_pixels.copy()
+                active_layer.adjust_color_temperature(
+                    self.original_temp, 
+                    self.target_temp, 
+                    opacity
+                )
+                
+                self.canva_widget.set_temperature_settings(
+                    self.original_temp,
+                    self.target_temp
+                )
+                
+                self.canva_widget.draw_canva()
+        
         self.accept()
     
     def _on_cancel(self):
+        self.update_timer.stop()
         self._restore_original()
         self.reject()
     
@@ -258,7 +287,7 @@ class ColorTemperatureDialog(QDialog):
             active_layer = canva.get_img()
             if active_layer:
                 active_layer.pixels = self.original_pixels.copy()
-                self.canva_widget.update()
+                self.canva_widget.draw_canva()
     
     def _on_help(self):
         from PySide6.QtWidgets import QMessageBox
@@ -282,6 +311,13 @@ class ColorTemperatureDialog(QDialog):
         if not self.canva_widget or not self.preview_checkbox.isChecked():
             return
         
+        self.update_timer.stop()
+        self.update_timer.start(50)
+    
+    def _do_update_preview(self):
+        if not self.canva_widget or not self.preview_checkbox.isChecked():
+            return
+        
         opacity = self.opacity_spinbox.value() / 100.0
         
         canva = self.canva_widget.canva
@@ -298,7 +334,7 @@ class ColorTemperatureDialog(QDialog):
             opacity
         )
         
-        self.canva_widget.update()
+        self.canva_widget.draw_canva()
     
     def get_settings(self):
         return {
