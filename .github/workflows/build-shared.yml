@@ -47,14 +47,14 @@ jobs:
                     pyinstaller main.spec
             
             - name: Upload artifact (Linux)
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v6
               if: runner.os == 'Linux'
               with:
                     name: EpiGimp-Linux
                     path: dist/EpiGimp
             
             - name: Upload artifact (Windows)
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v6
               if: runner.os == 'Windows'
               with:
                     name: EpiGimp-Windows
