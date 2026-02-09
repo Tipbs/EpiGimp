@@ -52,6 +52,7 @@ class LayerItemWidget(QWidget):
         
         self.lbl_name = QLabel(layer.name)
         self.edit_name = QLineEdit(layer.name)
+        self.edit_name.textChanged.connect(lambda name: self.layer.set_name(name))
         
         self.name_stack.addWidget(self.lbl_name)
         self.name_stack.addWidget(self.edit_name)

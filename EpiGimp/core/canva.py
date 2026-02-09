@@ -29,7 +29,8 @@ class Canva:
         if not len(self.layers):
             self.active_layer = None
             return
-        self.active_layer = self.layers[idx]
+        if 0 <= idx < len(self.layers):
+            self.active_layer = self.layers[idx]
     
     def swap_layer(self, fst: int, snd: int):
         if 0 <= fst < len(self.layers) and 0 <= snd < len(self.layers):
@@ -47,7 +48,6 @@ class Canva:
             self.active_layer = self.layers[idx]
         else:
             self.active_layer = self.layers[idx - 1]
-        print(len(self.layers))
 
     def add_layer(self, name: str = None, color=(0, 0, 0, 0)) -> Layer:
         if not name:
