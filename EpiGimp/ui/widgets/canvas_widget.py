@@ -81,6 +81,7 @@ class CanvaWidget(QWidget):
         # self._clipboard = None
 
     def add_layer(self):
+        self.canva.add_layer()
         self.layer_changed.emit(self.canva)
 
     def del_layer(self, idx: int):
