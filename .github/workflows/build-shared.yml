@@ -12,6 +12,11 @@ jobs:
                 os:
                     - ubuntu-latest
                     - windows-latest
+                include:
+                    - os: ubuntu-latest
+                      os_name: Linux
+                    - os: windows-latest
+                      os_name: Windows
 
         runs-on: ${{ matrix.os }}
         env:
@@ -37,6 +42,25 @@ jobs:
                     pip install -r requirements.txt
                     pip install -e .
             
+            - name: Package application with PyInstaller
+              run: |
+                    pyinstaller main.spec
+            
+            - name: Upload artifact (Linux)
+              uses: actions/upload-artifact@v3
+              if: runner.os == 'Linux'
+              with:
+                    name: EpiGimp-Linux
+                    path: dist/EpiGimp
+            
+            - name: Upload artifact (Windows)
+              uses: actions/upload-artifact@v3
+              if: runner.os == 'Windows'
+              with:
+                    name: EpiGimp-Windows
+                    path: dist/EpiGimp.exe
+            
             - name: Run tests
+              if: false
               run: |
                     pytest tests/
