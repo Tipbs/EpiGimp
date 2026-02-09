@@ -83,6 +83,11 @@ class CanvaWidget(QWidget):
     def add_layer(self):
         self.canva.add_layer()
         self.layer_changed.emit(self.canva)
+    
+    def import_image_as_layer(self, path: str):
+        img = LoaderPng(path).get_img()
+        self.canva.add_img_layer(img)
+        self.layer_changed.emit(self.canva)
 
     def del_layer(self, idx: int):
         if len(self.canva.layers) <= 0:
@@ -571,4 +576,8 @@ class CanvaWidget(QWidget):
             self.canva.rotate_90_counterclockwise()
         elif operation == 'rotate_180':
             self.canva.rotate_180()
+        self.update()
+    
+    def adjust_color_temperature(self, original_temp=6500, target_temp=6500, opacity=1.0):
+        self.canva.adjust_color_temperature(original_temp, target_temp, opacity)
         self.update()

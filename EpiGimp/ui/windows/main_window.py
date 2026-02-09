@@ -2,7 +2,7 @@ from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import QDockWidget, QFileDialog, QMainWindow, QVBoxLayout, QWidget, QStatusBar, QMessageBox
 from PySide6.QtCore import Qt
 from PySide6.QtCore import Signal
-from EpiGimp.ui.widgets.canvas_widget import CanvasWidget
+from EpiGimp.ui.widgets.canvas_widget import CanvasWidget, CanvaWidget
 from EpiGimp.ui.widgets.export_widget import ExportWidget
 from EpiGimp.ui.dialogs.settings_dialog import SettingsDialog
 from EpiGimp.ui.dialogs.new_image_dialog import NewImageDialog
@@ -11,6 +11,7 @@ from EpiGimp.ui.widgets.layers_widget import LayersWidget
 from EpiGimp.core.canva import Canva
 from EpiGimp.ui.dialogs.metadata_dialog import MetadataDialog, EditableMetadataDialog
 from EpiGimp.ui.widgets.tools_widget import ToolsWidget
+from EpiGimp.ui.dialogs.color_adjustment_dialog import ColorTemperatureDialog
 
 class MainWindow(QMainWindow):
     image_loaded = Signal(Canva)
@@ -123,7 +124,7 @@ class MainWindow(QMainWindow):
             return None
         return self.current_canva_widget().canva
     
-    def current_canva_widget(self) -> CanvasWidget|None:
+    def current_canva_widget(self) -> CanvaWidget|None:
         if self.canvas_widget.count() == 0:
             return None
         return self.canvas_widget.current_canva_widget()
@@ -170,6 +171,8 @@ class MainWindow(QMainWindow):
         self._rotate_180_act = QAction('Rotate 180°', self)
         self._rotate_180_act.triggered.connect(lambda: self.current_canva_widget().transform('rotate_180'))
 
+        self._temp_adjust_act = QAction('Adjust Color Temperature...', self)
+        self._temp_adjust_act.triggered.connect(self.adjust_temp_color)
         self.exit_act = QAction('Exit', self)
         self.exit_act.triggered.connect(self.close)
 
@@ -195,6 +198,9 @@ class MainWindow(QMainWindow):
         transform_menu.addAction(self.flip_vertical_act)
         transform_menu.addAction(self.rotate_act)
 
+        color_menu = self.menuBar().addMenu('Color')
+        color_menu.addAction(self._temp_adjust_act)
+
 
     def toggle_fullscreen(self, checked):
         if checked:
@@ -218,6 +224,14 @@ class MainWindow(QMainWindow):
         dialog = EditableMetadataDialog(canva, self)
         dialog.exec()
     
+    def adjust_temp_color(self):
+        canva_widget = self.current_canva_widget()
+        if canva_widget is None:
+            QMessageBox.warning(self, "No Image", "No image is currently loaded.")
+            return
+        temp_adjust_widget = ColorTemperatureDialog(parent=self, canva_widget=canva_widget)
+        temp_adjust_widget.exec()
+    
     def create_new_image(self):
         dialog = NewImageDialog(self)
         dialog.image_created.connect(self.image_loaded.emit)
@@ -228,7 +242,11 @@ class MainWindow(QMainWindow):
         if path is None or path == '':
             print("Can't open file")
             return
-        self.image_loaded.emit(Canva.load_image(path))
+        
+        if type == 1 and self.canvas_widget.count() > 0:
+            self.current_canva_widget().import_image_as_layer(path)
+        else:
+            self.image_loaded.emit(Canva.load_image(path))
 
     def save_file(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save image')
@@ -240,10 +258,7 @@ class MainWindow(QMainWindow):
         if path is None or path == '':
             print("Can't open project")
             return
-        if type == 1:
-            self.image_loaded.emit(self.current_canva().add_img_layer(path))
-        else:
-            self.image_loaded.emit(Canva.from_project(path))
+        self.image_loaded.emit(Canva.from_project(path))
 
     def load_project_from_startup(self, path: str):
         if path is None or path == '':

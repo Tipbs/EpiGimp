@@ -321,3 +321,10 @@ class Canva:
         for layer in self.layers:
             layer.rotate_180()
     
+    def adjust_color_temperature(self, original_temp=6500, target_temp=6500, opacity=1.0, layer_idx=None):
+        if layer_idx is not None:
+            if 0 <= layer_idx < len(self.layers):
+                self.layers[layer_idx].adjust_color_temperature(original_temp, target_temp, opacity)
+        else:
+            for layer in self.layers:
+                layer.adjust_color_temperature(original_temp, target_temp, opacity)
