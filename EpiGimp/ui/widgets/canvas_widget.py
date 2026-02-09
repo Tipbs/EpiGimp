@@ -1,4 +1,4 @@
-from PySide6.QtCore import QPoint, Signal, Slot
+from PySide6.QtCore import Qt, QPoint, Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
 from PySide6.QtGui import QImage, QPainter, QPixmap
 
@@ -142,12 +142,11 @@ class CanvaWidget(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        
         painter.drawPixmap(0, 0, self.canvas_buffer)
 
     def draw_canva(self):
         painter = QPainter(self.canvas_buffer)
-        # self.canvas_buffer.fill(Qt.GlobalColor.white)
+        self.canvas_buffer.fill(Qt.GlobalColor.white)
         np_img = self.get_img()
         h, w, _ = np_img.shape
         qimg = QImage(
