@@ -60,6 +60,9 @@ class Layer:
     def get_visibility(self):
         return self.visibility
 
+    def set_visibility(self, state: Bool):
+        self.visibility = state
+
     def toggle_visibility(self):
         self.visibility = not self.visibility
 

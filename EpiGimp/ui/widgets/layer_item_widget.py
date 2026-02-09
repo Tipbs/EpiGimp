@@ -9,11 +9,11 @@ class LayerItemWidget(QWidget):
     Contains: Visibility Toggle, Lock Toggle, Thumbnail, and Editable Name.
     """
     # Signals to communicate with your Canvas/Controller
-    visibilityToggled = Signal(bool)
     lockToggled = Signal(bool)
     nameChanged = Signal(str)
+    visibilityToggled = Signal(bool)
 
-    def __init__(self, name, layer, parent = None):
+    def __init__(self, layer, parent = None):
         super().__init__(parent)
         
         thumbnail = None
@@ -21,11 +21,11 @@ class LayerItemWidget(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
         layout.setSpacing(6)
+        self.visibilityToggled.connect(lambda state: layer.set_visibility(state))
 
         # 1. Visibility Button (Eye Icon)
         self.btn_visible = QPushButton("👁")
         self.btn_visible.setCheckable(True)
-        self.btn_visible.setChecked(True)
         self.btn_visible.setFixedSize(24, 24)
         self.btn_visible.setToolTip("Toggle Visibility")
         self.btn_visible.setStyleSheet("""
@@ -33,6 +33,7 @@ class LayerItemWidget(QWidget):
             QPushButton:checked { color: white; }
             QPushButton:hover { background: #444; }
         """)
+        self.btn_visible.setChecked(layer.visibility)
 
         # 2. Thumbnail Label
         self.lbl_thumb = QLabel()
@@ -49,8 +50,8 @@ class LayerItemWidget(QWidget):
         # 3. Layer Name (with double-click to edit)
         self.name_stack = QStackedWidget()
         
-        self.lbl_name = QLabel(name)
-        self.edit_name = QLineEdit(name)
+        self.lbl_name = QLabel(layer.name)
+        self.edit_name = QLineEdit(layer.name)
         
         self.name_stack.addWidget(self.lbl_name)
         self.name_stack.addWidget(self.edit_name)

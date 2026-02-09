@@ -17,6 +17,7 @@ from EpiGimp.core.canva import Canva
 class LayersWidget(QFrame):
     layer_selcted = Signal(int) # Emits index of selected layer
     layer_created = Signal(Canva)
+    render = Signal()
 
     def __init__(self, canva=None, parent=None):
         super().__init__(parent)
@@ -60,10 +61,9 @@ class LayersWidget(QFrame):
         self.list_widget.clear()
         for layer in canva.layers:
             item = QListWidgetItem(self.list_widget)
-            custom_widget = LayerItemWidget(layer.name, layer)
-
+            custom_widget = LayerItemWidget(layer)
+            custom_widget.visibilityToggled.connect(lambda: self.render.emit())
             item.setSizeHint(custom_widget.sizeHint())
-
             self.list_widget.insertItem(0, item)
             self.list_widget.setItemWidget(item, custom_widget)
             if layer == active_layer:
