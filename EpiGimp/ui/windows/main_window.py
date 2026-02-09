@@ -89,12 +89,13 @@ class MainWindow(QMainWindow):
     def change_canva(self):
         if not len(self.current_canva_widget().canva.layers):
             return None
-        return self.current_canva().set_active_layer(self.layers_widget.list_widget.currentRow())
+        self.layers_widget.render.connect(lambda: self.current_canva_widget().draw_canva())
+        self.current_canva().set_active_layer(self.layers_widget.list_widget.currentRow())
 
     def drawing(self, pos):
         if not self.current_canva_widget():
             return
-        self.tools_panel.get_current_tool().apply(pos, self.current_canva().active_layer)
+        rect = self.tools_panel.get_current_tool().apply(pos, self.current_canva().active_layer)
         self.current_canva_widget().draw_canva()
 
     def canva_update(self):

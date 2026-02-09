@@ -31,7 +31,8 @@ class Brush(BaseTool):
     def apply(self, pos: QPoint, layer: Layer):
         painter = QPainter(layer.qimage)
         offset = self.size / 2
-        target_rect = QRectF(pos.x() - offset - 5, pos.y() - offset - 27, 
+        rect = QRectF(pos.x() - offset - 5, pos.y() - offset - 27, 
                              self.size, self.size)
-        painter.drawPixmap(target_rect.toRect(), self.sprite)
+        painter.drawPixmap(rect.toRect(), self.sprite)
         painter.end() # Important: Save the painting
+        return rect.toRect().adjusted(-2, -2, 2, 2)
