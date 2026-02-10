@@ -1,10 +1,8 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QGridLayout,
-                               QLabel, QLineEdit, QComboBox, QPushButton, 
-                               QSpinBox, QDoubleSpinBox, QGroupBox, QTabWidget,
-                               QWidget, QTextEdit, QCheckBox, QButtonGroup,
+                               QLabel, QComboBox, QPushButton, 
+                               QSpinBox, QDoubleSpinBox, QGroupBox, QWidget, QTextEdit, QButtonGroup,
                                QToolButton, QFrame)
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtCore import Signal
 from typing import Tuple, Dict
 from EpiGimp.core.canva import Canva
 
@@ -188,7 +186,7 @@ class NewImageDialog(QDialog):
             "Transparency",
             "Pattern",
         ])
-        self.fill_combo.setCurrentIndex(2)  # Default to White
+        self.fill_combo.setCurrentIndex(3)  # Default to White
         layout.addWidget(self.fill_combo, 8, 1, 1, 2)
         
         group.setLayout(layout)

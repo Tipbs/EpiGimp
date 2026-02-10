@@ -5,15 +5,6 @@ from EpiGimp.core.layer import Layer
 from EpiGimp.ui.widgets.layer_item_widget import LayerItemWidget
 from EpiGimp.core.canva import Canva
 
-# class LayersWidget(QWidget):
-#     def __init__(self, canva, parent=None):
-#         super().__init__(parent)
-#         layout = QHBoxLayout(self)
-#         layout.setContentsMargins(5, 2, 5, 2)
-#         layout.setSpacing(10)
-#
-#         layout.addWidget(LayersStackWidget(canva))
-
 class LayersWidget(QFrame):
     layer_selcted = Signal(int) # Emits index of selected layer
     layer_created = Signal(Canva)

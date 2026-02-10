@@ -8,7 +8,7 @@ class LoaderPng:
             with open(filename, 'rb') as f:
                 file_bytes = np.frombuffer(f.read(), dtype=np.uint8)
             self.img = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
-        except Exception as e:
+        except Exception:
             self.img = None
         assert self.img is not None, "Failed to load image"
         self.convert_to_RGBA()
