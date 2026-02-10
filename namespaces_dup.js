@@ -1,0 +1,25 @@
+var namespaces_dup =
+[
+    [ "appearance", "namespaceappearance.html", "namespaceappearance" ],
+    [ "canva", "namespacecanva.html", "namespacecanva" ],
+    [ "canvas_widget", "namespacecanvas__widget.html", "namespacecanvas__widget" ],
+    [ "color_adjustment_dialog", "namespacecolor__adjustment__dialog.html", "namespacecolor__adjustment__dialog" ],
+    [ "EpiGimp", "namespaceEpiGimp.html", "namespaceEpiGimp" ],
+    [ "export_widget", "namespaceexport__widget.html", "namespaceexport__widget" ],
+    [ "file_exporter", "namespacefile__exporter.html", "namespacefile__exporter" ],
+    [ "file_loader", "namespacefile__loader.html", "namespacefile__loader" ],
+    [ "file_saver", "namespacefile__saver.html", "namespacefile__saver" ],
+    [ "general", "namespacegeneral.html", "namespacegeneral" ],
+    [ "history", "namespacehistory.html", "namespacehistory" ],
+    [ "layer", "namespacelayer.html", "namespacelayer" ],
+    [ "layer_item_widget", "namespacelayer__item__widget.html", "namespacelayer__item__widget" ],
+    [ "layers_widget", "namespacelayers__widget.html", "namespacelayers__widget" ],
+    [ "loader_png", "namespaceloader__png.html", "namespaceloader__png" ],
+    [ "main_window", "namespacemain__window.html", "namespacemain__window" ],
+    [ "metadata_dialog", "namespacemetadata__dialog.html", "namespacemetadata__dialog" ],
+    [ "new_image_dialog", "namespacenew__image__dialog.html", "namespacenew__image__dialog" ],
+    [ "settings_dialog", "namespacesettings__dialog.html", "namespacesettings__dialog" ],
+    [ "shortcuts", "namespaceshortcuts.html", "namespaceshortcuts" ],
+    [ "startup_widget", "namespacestartup__widget.html", "namespacestartup__widget" ],
+    [ "tools_widget", "namespacetools__widget.html", "namespacetools__widget" ]
+];

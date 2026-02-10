@@ -1,0 +1,21 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,194,55,219"/>
+<area shape="rect" id="Node000001" href="$classEpiGimp_1_1tools_1_1base__tool_1_1BaseTool.html" title=" " alt="" coords="103,187,251,227"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="69,204,102,204,102,209,69,209"/>
+<area shape="rect" id="Node000002" href="$classEpiGimp_1_1tools_1_1base__tool_1_1ToolNotImplemented.html" title=" " alt="" coords="329,5,523,45"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="193,173,235,113,264,81,297,55,327,40,330,45,300,60,268,85,239,116,198,176"/>
+<area shape="rect" id="Node000003" href="$classEpiGimp_1_1tools_1_1brush_1_1Brush.html" title=" " alt="" coords="329,70,523,95"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="204,175,245,137,297,104,329,93,330,98,300,109,249,142,207,179"/>
+<area shape="rect" id="Node000004" href="$classEpiGimp_1_1tools_1_1eraser_1_1Eraser.html" title=" " alt="" coords="325,119,527,145"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="231,179,298,153,344,142,345,147,299,159,233,184"/>
+<area shape="rect" id="Node000005" href="$classEpiGimp_1_1tools_1_1move_1_1Move.html" title=" " alt="" coords="329,169,523,194"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="264,195,328,189,329,194,264,200"/>
+<area shape="rect" id="Node000006" href="$classEpiGimp_1_1tools_1_1move_1_1MoveSelection.html" title=" " alt="" coords="299,218,553,243"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="264,212,299,216,298,221,264,218"/>
+<area shape="rect" id="Node000007" href="$classEpiGimp_1_1tools_1_1pencil_1_1Pencil.html" title=" " alt="" coords="327,267,525,293"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="237,230,299,252,350,265,349,270,298,257,235,235"/>
+<area shape="rect" id="Node000008" href="$classEpiGimp_1_1tools_1_1selection_1_1EllipseSelection.html" title=" " alt="" coords="336,317,516,357"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="209,234,250,270,300,302,337,316,335,321,297,306,247,274,206,238"/>
+<area shape="rect" id="Node000009" href="$classEpiGimp_1_1tools_1_1selection_1_1RectangleSelection.html" title=" " alt="" coords="336,381,516,421"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="196,238,237,304,266,338,300,367,337,385,335,389,297,372,262,342,233,308,191,241"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,55,112,80"/>
+<area shape="rect" id="Node000001" href="$classappearance_1_1AppearanceSettingsPage.html" title=" " alt="" coords="160,5,423,31"/>
+<area shape="poly" id="edge28_Node000000_Node000001" title=" " alt="" coords="120,49,159,39,216,28,217,33,161,45,121,54"/>
+<area shape="rect" id="Node000002" href="$classgeneral_1_1GeneralSettingsPage.html" title=" " alt="" coords="186,55,397,80"/>
+<area shape="poly" id="edge29_Node000000_Node000002" title=" " alt="" coords="126,65,186,65,186,70,126,70"/>
+<area shape="rect" id="Node000003" href="$classshortcuts_1_1ShortcutsSettingsPage.html" title=" " alt="" coords="176,104,407,129"/>
+<area shape="poly" id="edge30_Node000000_Node000003" title=" " alt="" coords="125,81,161,89,222,101,221,107,159,94,124,86"/>
+</map>

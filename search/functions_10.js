@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['save_0',['save',['../classEpiGimp_1_1config_1_1settings_1_1GeneralSettings.html#ae4ca1782d114b3680412727955152a8d',1,'EpiGimp.config.settings.GeneralSettings.save()'],['../classEpiGimp_1_1config_1_1settings_1_1AppearanceSettings.html#a71d2e02dfa4cf7fd8ed41700f29e7596',1,'EpiGimp.config.settings.AppearanceSettings.save()'],['../classEpiGimp_1_1config_1_1settings_1_1ShortcutsSettings.html#af2ea2e81a1e44e652d4cb60f437d13d9',1,'EpiGimp.config.settings.ShortcutsSettings.save()'],['../classEpiGimp_1_1config_1_1settings_1_1Settings.html#aa7ce74fb177347d39f28d5922bda0894',1,'EpiGimp.config.settings.Settings.save()']]],
+  ['save_5ffile_1',['save_file',['../classmain__window_1_1MainWindow.html#abe7365c3f77f42770b0d196183f3847e',1,'main_window::MainWindow']]],
+  ['save_5fproject_2',['save_project',['../classcanva_1_1Canva.html#a92500e558edbb61637b180389a62bb40',1,'canva.Canva.save_project()'],['../classfile__saver_1_1FileSaver.html#a2236e58ff4d9528f74da8a6b555d6f72',1,'file_saver.FileSaver.save_project()']]],
+  ['save_5fsettings_3',['save_settings',['../namespaceEpiGimp_1_1config.html#a3f65421cc47f3c1e2429ba91adae80b4',1,'EpiGimp.config.save_settings()'],['../classsettings__dialog_1_1SettingsPage.html#aef2efd22d0b141194cb3d6a908909fe1',1,'settings_dialog.SettingsPage.save_settings()'],['../classgeneral_1_1GeneralSettingsPage.html#a8ae15e9402238d578aab4d2f5a27f1ae',1,'general.GeneralSettingsPage.save_settings()'],['../classEpiGimp_1_1config_1_1settings_1_1SettingsManager.html#adfbc7ed69eac57880a754aeeca4194cf',1,'EpiGimp.config.settings.SettingsManager.save_settings()'],['../classshortcuts_1_1ShortcutsSettingsPage.html#af5ad2f14e9801b15a22b5aedf6cb736f',1,'shortcuts.ShortcutsSettingsPage.save_settings()']]],
+  ['select_5fall_4',['select_all',['../classmain__window_1_1MainWindow.html#a1d81365d385619bdf570cce92544d72b',1,'main_window::MainWindow']]],
+  ['serialize_5flayer_5',['serialize_layer',['../classfile__saver_1_1FileSaver.html#a6b3b768ef939aedc9acacdef2c1addf8',1,'file_saver::FileSaver']]],
+  ['set_5factive_5flayer_6',['set_active_layer',['../classcanva_1_1Canva.html#abe736c63d21bd8a96ec729eba51e38b9',1,'canva::Canva']]],
+  ['set_5fcanva_7',['set_canva',['../classmetadata__dialog_1_1MetadataDialog.html#ac386fe869a9bc91fc430d4550e1cea25',1,'metadata_dialog.MetadataDialog.set_canva()'],['../classlayers__widget_1_1LayersWidget.html#aea6877684f9ebebb89f940221a251910',1,'layers_widget.LayersWidget.set_canva()']]],
+  ['set_5fmetadata_8',['set_metadata',['../classcanva_1_1Canva.html#a9c86616d2578db5a9f8cfafec87177e1',1,'canva::Canva']]],
+  ['set_5fname_9',['set_name',['../classlayer_1_1Layer.html#a115b52f50a7356bb11c0b5a0e95d6780',1,'layer::Layer']]],
+  ['set_5fselection_10',['set_selection',['../classcanva_1_1Canva.html#a6f1b5e17445b589c4752b176ec67f497',1,'canva::Canva']]],
+  ['set_5ftemperature_5fsettings_11',['set_temperature_settings',['../classcanvas__widget_1_1CanvaWidget.html#ac709f3eb7159942c1f01314b97d54e6c',1,'canvas_widget::CanvaWidget']]],
+  ['set_5ftool_12',['set_tool',['../classcanvas__widget_1_1CanvaWidget.html#aa4d3a6c0402cbe194301f16399688d2e',1,'canvas_widget::CanvaWidget']]],
+  ['set_5fvisibility_13',['set_visibility',['../classlayer_1_1Layer.html#aed9238caed0b26763785895740a4299c',1,'layer::Layer']]],
+  ['setup_5fsize_14',['setup_size',['../classexport__widget_1_1ExportWidget.html#a474ba3a61e27bfbae05140fe19719482',1,'export_widget::ExportWidget']]],
+  ['setup_5fui_15',['setup_ui',['../classexport__widget_1_1ExportWidget.html#a6dc4dc6e968c78cc189bb9e3618b44e1',1,'export_widget::ExportWidget']]],
+  ['show_5fhelp_16',['show_help',['../classnew__image__dialog_1_1NewImageDialog.html#adfd64504acbbde900192e3e313385ba7',1,'new_image_dialog::NewImageDialog']]],
+  ['show_5fmetadata_5fdialog_17',['show_metadata_dialog',['../classmain__window_1_1MainWindow.html#ac87f74657a9d209961973b463d43d73f',1,'main_window::MainWindow']]],
+  ['swap_5flayer_18',['swap_layer',['../classcanva_1_1Canva.html#abad21030692f2c5043ccf0025861dc28',1,'canva.Canva.swap_layer()'],['../classcanvas__widget_1_1CanvaWidget.html#a709a5a6165a3f0c25b88499204298458',1,'canvas_widget.CanvaWidget.swap_layer()'],['../classmain__window_1_1MainWindow.html#ab9a714300885036f96218c8682e93623',1,'main_window.MainWindow.swap_layer()']]]
+];

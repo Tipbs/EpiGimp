@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['pages_0',['pages',['../classsettings__dialog_1_1SettingsContainer.html#a4f8fa1957d3414bac119961163d6d0f2',1,'settings_dialog::SettingsContainer']]],
+  ['paintevent_1',['paintEvent',['../classcanvas__widget_1_1CanvaWidget.html#a5631b123e5624d017a5718baedbab5ca',1,'canvas_widget::CanvaWidget']]],
+  ['paste_5fact_2',['paste_act',['../classmain__window_1_1MainWindow.html#abeec054d7b0c602c70e5915c64eb437e',1,'main_window::MainWindow']]],
+  ['paste_5fselection_3',['paste_selection',['../classmain__window_1_1MainWindow.html#aafb1e8329f2a3bceed132d272a5bfcb5',1,'main_window.MainWindow.paste_selection'],['../classcanva_1_1Canva.html#a24a8e49616e82bd5af335e57493c4446',1,'canva.Canva.paste_selection()'],['../classmain__window_1_1MainWindow.html#ab059d61dfc34b339f16398d0470c190a',1,'main_window.MainWindow.paste_selection()']]],
+  ['path_5flabel_4',['path_label',['../classexport__widget_1_1ExportWidget.html#a47f9898b8b91761e25ac943fb63260ac',1,'export_widget::ExportWidget']]],
+  ['pencil_5',['Pencil',['../classEpiGimp_1_1tools_1_1pencil_1_1Pencil.html',1,'EpiGimp::tools::pencil']]],
+  ['pencil_2epy_6',['pencil.py',['../pencil_8py.html',1,'']]],
+  ['pixel_5finfo_7',['pixel_info',['../classnew__image__dialog_1_1NewImageDialog.html#a3cd7a0ea323ea37e4c6c5cf48ff25bd3',1,'new_image_dialog::NewImageDialog']]],
+  ['pixels_8',['pixels',['../classlayer_1_1Layer.html#aa9efba8378711a71a09c0216af7f878f',1,'layer::Layer']]],
+  ['plugin_5fdirs_9',['plugin_dirs',['../classEpiGimp_1_1plugins_1_1plugin__manager_1_1PluginManager.html#a202c200648538b17169c71689f37f262',1,'EpiGimp::plugins::plugin_manager::PluginManager']]],
+  ['plugin_5fmanager_2epy_10',['plugin_manager.py',['../plugin__manager_8py.html',1,'']]],
+  ['pluginmanager_11',['PluginManager',['../classEpiGimp_1_1plugins_1_1plugin__manager_1_1PluginManager.html',1,'EpiGimp::plugins::plugin_manager']]],
+  ['plugins_12',['plugins',['../classEpiGimp_1_1plugins_1_1plugin__manager_1_1PluginManager.html#a66fd0396b066ea910ffc6cbdbf9b0497',1,'EpiGimp::plugins::plugin_manager::PluginManager']]],
+  ['populate_5ffiles_13',['populate_files',['../classexport__widget_1_1ExportWidget.html#aee3c4865eac4c17e2148db7371d1e238',1,'export_widget::ExportWidget']]],
+  ['populate_5ffolders_14',['populate_folders',['../classexport__widget_1_1ExportWidget.html#af27e6a5315d1667c44b24b9811ad9765',1,'export_widget::ExportWidget']]],
+  ['portrait_5fbtn_15',['portrait_btn',['../classnew__image__dialog_1_1NewImageDialog.html#ab866289c2a0dc3ef906f8d41479e02da',1,'new_image_dialog::NewImageDialog']]],
+  ['precision_16',['precision',['../classnew__image__dialog_1_1NewImageDialog.html#ab514565aeb962beff2e46506717943fb',1,'new_image_dialog::NewImageDialog']]],
+  ['presets_5fcombo_17',['presets_combo',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#ad132880a8a05b3bf4207e4478bc5f499',1,'color_adjustment_dialog::ColorTemperatureDialog']]],
+  ['preview_5fcheckbox_18',['preview_checkbox',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#a7f1133ef990c6114389dcba75286a1bc',1,'color_adjustment_dialog::ColorTemperatureDialog']]],
+  ['project_5fpath_19',['project_path',['../classcanva_1_1Canva.html#af0cd5cd7b1363cbede77ae3ddcdfab1f',1,'canva::Canva']]],
+  ['put_20',['put',['../classhistory_1_1Histroy.html#a71db64ff9bf5e191b04caa32138f63c9',1,'history::Histroy']]]
+];

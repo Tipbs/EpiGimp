@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['ok_5fbtn_0',['ok_btn',['../classnew__image__dialog_1_1NewImageDialog.html#a56b58ea50280de3f634eee300ee883db',1,'new_image_dialog::NewImageDialog']]],
+  ['on_5fapply_1',['on_apply',['../classsettings__dialog_1_1SettingsDialog.html#a6b759195f7d9e0d14c384eee1fdd748d',1,'settings_dialog::SettingsDialog']]],
+  ['on_5ffile_5fdouble_5fclicked_2',['on_file_double_clicked',['../classexport__widget_1_1ExportWidget.html#ab25702e69de6094187c0d3130fbff12c',1,'export_widget::ExportWidget']]],
+  ['on_5ffolder_5fexpanded_3',['on_folder_expanded',['../classexport__widget_1_1ExportWidget.html#aa630c90834a54f35b97dafd3dcf891f2',1,'export_widget::ExportWidget']]],
+  ['on_5ffolder_5fselected_4',['on_folder_selected',['../classexport__widget_1_1ExportWidget.html#a3433dcb3ca09683722c40dcc5e988e91',1,'export_widget::ExportWidget']]],
+  ['on_5fok_5',['on_ok',['../classnew__image__dialog_1_1NewImageDialog.html#a9deade181bba6cca5a6659935dee5917',1,'new_image_dialog::NewImageDialog']]],
+  ['on_5forientation_5fchanged_6',['on_orientation_changed',['../classnew__image__dialog_1_1NewImageDialog.html#a344d0d011068891f02d5afdaba055f19',1,'new_image_dialog::NewImageDialog']]],
+  ['on_5fpage_5fchanged_7',['on_page_changed',['../classsettings__dialog_1_1SettingsDialog.html#a5ea8cf34a84c2bdc7dc7e2ff7e98c76b',1,'settings_dialog::SettingsDialog']]],
+  ['on_5freject_8',['on_reject',['../classsettings__dialog_1_1SettingsDialog.html#a921ae9c7e352d4f3e306e3001898eb99',1,'settings_dialog::SettingsDialog']]],
+  ['on_5fsave_9',['on_save',['../classsettings__dialog_1_1SettingsDialog.html#ad9c8fa3cec2e5fc0b2c2a2e397371fdd',1,'settings_dialog::SettingsDialog']]],
+  ['on_5ftemplate_5fchanged_10',['on_template_changed',['../classnew__image__dialog_1_1NewImageDialog.html#aebc11fa1595a4a69d42eee966ca20d24',1,'new_image_dialog::NewImageDialog']]],
+  ['on_5ftool_5fselected_11',['on_tool_selected',['../classmain__window_1_1MainWindow.html#a0552ce3942357518df08b5eec3c0942c',1,'main_window::MainWindow']]],
+  ['opacity_5fspinbox_12',['opacity_spinbox',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#aa3eeb2adcc4c78a8656b0ef5c82bbe6c',1,'color_adjustment_dialog::ColorTemperatureDialog']]],
+  ['open_5fact_13',['open_act',['../classmain__window_1_1MainWindow.html#a075c1f12d5c2a57a1216401f45a18e9b',1,'main_window::MainWindow']]],
+  ['open_5fexisting_5fclicked_14',['open_existing_clicked',['../classstartup__widget_1_1StartupDialog.html#ae1fa01579555552df1dd022bc6605ef8',1,'startup_widget::StartupDialog']]],
+  ['open_5flast_5fproject_15',['open_last_project',['../classgeneral_1_1GeneralSettingsPage.html#a0323930dbda059c4693bf82d83218e16',1,'general::GeneralSettingsPage']]],
+  ['open_5fnew_5fact_16',['open_new_act',['../classmain__window_1_1MainWindow.html#ac994735b39333306aa8b85d5abd7bd9f',1,'main_window::MainWindow']]],
+  ['open_5frecent_5fclicked_17',['open_recent_clicked',['../classstartup__widget_1_1StartupDialog.html#a0bef3fdf0606688031071a76f7dc1f60',1,'startup_widget::StartupDialog']]],
+  ['open_5fselected_5fbtn_18',['open_selected_btn',['../classstartup__widget_1_1StartupDialog.html#a5880608a162b0a87ec33d29055861e03',1,'startup_widget::StartupDialog']]],
+  ['open_5fsettings_19',['open_settings',['../classmain__window_1_1MainWindow.html#aff597bcb852b8ecae1bbc4b8b99371b6',1,'main_window::MainWindow']]],
+  ['orientation_5fgroup_20',['orientation_group',['../classnew__image__dialog_1_1NewImageDialog.html#a4a0885441f28dbd96d030ed6b57f3dec',1,'new_image_dialog::NewImageDialog']]],
+  ['original_5fpixels_21',['original_pixels',['../classEpiGimp_1_1tools_1_1move_1_1Move.html#a9f2a40ed049a978dc2d3131c72758d3e',1,'EpiGimp.tools.move.Move.original_pixels'],['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#afdda615480399848a0b51bcb8c3e5caa',1,'color_adjustment_dialog.ColorTemperatureDialog.original_pixels']]],
+  ['original_5frect_22',['original_rect',['../classEpiGimp_1_1tools_1_1move_1_1MoveSelection.html#a9b65cd657b3659b4e50cca046595d2a5',1,'EpiGimp::tools::move::MoveSelection']]],
+  ['original_5fspinbox_23',['original_spinbox',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#a7098da06516b8f950cfb1f42f39964cc',1,'color_adjustment_dialog::ColorTemperatureDialog']]],
+  ['original_5ftemp_24',['original_temp',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#a48f0b2fe503141741e54ad062e9d17aa',1,'color_adjustment_dialog.ColorTemperatureDialog.original_temp'],['../classcanvas__widget_1_1CanvaWidget.html#a08d7981f3c46919dbf7f370a2180d395',1,'canvas_widget.CanvaWidget.original_temp']]]
+];

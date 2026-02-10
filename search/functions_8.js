@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['import_5fimage_5fas_5flayer_0',['import_image_as_layer',['../classcanvas__widget_1_1CanvaWidget.html#ac57951b32d415728d671e7b242545f3e',1,'canvas_widget::CanvaWidget']]],
+  ['init_5fui_1',['init_ui',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#acb731e4418f77c0180836cf720615bd6',1,'color_adjustment_dialog.ColorTemperatureDialog.init_ui()'],['../classmetadata__dialog_1_1MetadataDialog.html#a0fd0360c48463b744dfe913e9b32c9bd',1,'metadata_dialog.MetadataDialog.init_ui()'],['../classmetadata__dialog_1_1EditableMetadataDialog.html#af1520036423e1dc97995c361ab74e5d7',1,'metadata_dialog.EditableMetadataDialog.init_ui()'],['../classnew__image__dialog_1_1NewImageDialog.html#a704d6b57ee0dc365402b3c69e59b9ddb',1,'new_image_dialog.NewImageDialog.init_ui()'],['../classsettings__dialog_1_1SettingsDialog.html#a0983fe97006bd95072d0a69ab0d1f8c9',1,'settings_dialog.SettingsDialog.init_ui()'],['../classstartup__widget_1_1StartupDialog.html#ad56235c55f9d6687dad21f3cb24d9f52',1,'startup_widget.StartupDialog.init_ui()']]]
+];

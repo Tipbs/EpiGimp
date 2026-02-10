@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['get_0',['get',['../classhistory_1_1Histroy.html#a95e9a14491e1eb965f772a6f029b3ac3',1,'history::Histroy']]],
+  ['get_5fcanva_1',['get_canva',['../classmetadata__dialog_1_1EditableMetadataDialog.html#a358ca10022460c899b9e54b5d74c722b',1,'metadata_dialog::EditableMetadataDialog']]],
+  ['get_5fcurrent_5ftool_2',['get_current_tool',['../classtools__widget_1_1ToolsWidget.html#af91cf24f5123d6e60fd5e00ec56842e5',1,'tools_widget::ToolsWidget']]],
+  ['get_5ffill_5fcolor_3',['get_fill_color',['../classnew__image__dialog_1_1NewImageDialog.html#ae527f2e1c1531f464fece8f8796c8ae7',1,'new_image_dialog::NewImageDialog']]],
+  ['get_5fimage_5ffor_5fcompisition_4',['get_image_for_compisition',['../classcanva_1_1Canva.html#a750af0057bfb014ca694d48352533f0a',1,'canva::Canva']]],
+  ['get_5fimage_5fproperties_5',['get_image_properties',['../classnew__image__dialog_1_1NewImageDialog.html#a767bc566b309510613dd9d69a42fffab',1,'new_image_dialog::NewImageDialog']]],
+  ['get_5fimg_6',['get_img',['../classcanva_1_1Canva.html#a89b364b45fa8fee31ea11b769a103773',1,'canva.Canva.get_img()'],['../classloader__png_1_1LoaderPng.html#a24b6c40c91f16e11b6816936668ee66d',1,'loader_png.LoaderPng.get_img()'],['../classcanvas__widget_1_1CanvaWidget.html#a177fcc8121a29e9dfe54bba286dc901f',1,'canvas_widget.CanvaWidget.get_img()']]],
+  ['get_5flayer_7',['get_layer',['../classloader__png_1_1LoaderPng.html#aef12e0deb2b5d4444fe3e6ffc1f16083',1,'loader_png::LoaderPng']]],
+  ['get_5fmetadata_8',['get_metadata',['../classcanva_1_1Canva.html#aef82473ed3917d111ce26c16ae79293f',1,'canva::Canva']]],
+  ['get_5foffset_9',['get_offset',['../classEpiGimp_1_1tools_1_1move_1_1MoveSelection.html#abb16afb3a2eba89edc33147f5f17b799',1,'EpiGimp::tools::move::MoveSelection']]],
+  ['get_5fpainter_10',['get_painter',['../classlayer_1_1Layer.html#a92aea79b66fa3e51a643a3dc0c702248',1,'layer::Layer']]],
+  ['get_5fpil_11',['get_pil',['../classlayer_1_1Layer.html#afc467284713f3ff2890ce61d98de7b21',1,'layer::Layer']]],
+  ['get_5fpixels_12',['get_pixels',['../classlayer_1_1Layer.html#afe8936a46852acc65538b0127acedea5',1,'layer::Layer']]],
+  ['get_5fselected_5flayers_13',['get_selected_layers',['../classcanva_1_1Canva.html#a8e36a683d8fd37221d7dcd7e97dbc39b',1,'canva::Canva']]],
+  ['get_5fselected_5fpath_14',['get_selected_path',['../classexport__widget_1_1ExportWidget.html#aa17903fb7d74ecbb598f157965b46663',1,'export_widget::ExportWidget']]],
+  ['get_5fselection_15',['get_selection',['../classcanva_1_1Canva.html#a1018abf04d77987df4eeb2425e7f5dea',1,'canva.Canva.get_selection()'],['../classEpiGimp_1_1tools_1_1selection_1_1RectangleSelection.html#ad5a7d896c1d82bc6e19cfc7c28b20ac8',1,'EpiGimp.tools.selection.RectangleSelection.get_selection()'],['../classEpiGimp_1_1tools_1_1selection_1_1EllipseSelection.html#ae398ff07cc314a0173b85657a1085409',1,'EpiGimp.tools.selection.EllipseSelection.get_selection()']]],
+  ['get_5fsettings_16',['get_settings',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#ae5fe9f6518875dcce347b7c37b0d5fb0',1,'color_adjustment_dialog.ColorTemperatureDialog.get_settings()'],['../namespaceEpiGimp_1_1config_1_1settings.html#aaea6081e17e2a648168e7e2c9643f524',1,'EpiGimp.config.settings.get_settings()']]],
+  ['get_5ftemperature_5fsettings_17',['get_temperature_settings',['../classcanvas__widget_1_1CanvaWidget.html#afd8c5b100769fea218cc028885098fe5',1,'canvas_widget::CanvaWidget']]],
+  ['get_5fvisibility_18',['get_visibility',['../classlayer_1_1Layer.html#a5ab831dfd3ac72d7da596a4dd7e2b5f8',1,'layer::Layer']]]
+];

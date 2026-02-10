@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['accept_0',['accept',['../classmetadata__dialog_1_1MetadataDialog.html#a0bbc00afba6b09c07db8bee99b561899',1,'metadata_dialog::MetadataDialog']]],
+  ['accept_5fexport_1',['accept_export',['../classexport__widget_1_1ExportWidget.html#a4d6091ce6f6241ad2a2a9daaa4892ca7',1,'export_widget.ExportWidget.accept_export'],['../classexport__widget_1_1ExportWidget.html#a9784c150b84ffdfdebafe4f0d492df66',1,'export_widget.ExportWidget.accept_export(self)']]],
+  ['action_2',['Action',['../classhistory_1_1Action.html',1,'history']]],
+  ['active_5flayer_3',['active_layer',['../classcanva_1_1Canva.html#a80fb277c9adc25c3476b5c4f39deb036',1,'canva::Canva']]],
+  ['add_5fcanva_4',['add_canva',['../classcanvas__widget_1_1CanvasWidget.html#ae3facc7a4a589655d4edc70e43dbbb47',1,'canvas_widget::CanvasWidget']]],
+  ['add_5fimg_5flayer_5',['add_img_layer',['../classcanva_1_1Canva.html#ac5b650a046fa283235c9a4e9a90e9f23',1,'canva::Canva']]],
+  ['add_5flayer_6',['add_layer',['../classcanva_1_1Canva.html#a3995d6b49c438c3a06cf64a9a1bf4308',1,'canva.Canva.add_layer()'],['../classmain__window_1_1MainWindow.html#a7f271e77ba718776fb692f32c82f2509',1,'main_window.MainWindow.add_layer()'],['../classlayers__widget_1_1LayersWidget.html#a752921bf7b02f64b955a2a8b65855d56',1,'layers_widget.LayersWidget.add_layer()'],['../classcanvas__widget_1_1CanvaWidget.html#a0b00151e2ac4961921e696768046e727',1,'canvas_widget.CanvaWidget.add_layer()'],['../classmain__window_1_1MainWindow.html#ac1e03d4c8a4374d211eb269254357182',1,'main_window.MainWindow.add_layer']]],
+  ['add_5flayer_5ffrom_5flayer_7',['add_layer_from_layer',['../classcanva_1_1Canva.html#a0799ff73ea8f1c7d5bad72a6470b1a3e',1,'canva::Canva']]],
+  ['add_5flayer_5ffrom_5fproject_8',['add_layer_from_project',['../classcanva_1_1Canva.html#ababa0d2b468c504dbad98c40e4fa2d23',1,'canva::Canva']]],
+  ['add_5fplaceholder_5fchild_9',['add_placeholder_child',['../classexport__widget_1_1ExportWidget.html#a5d4dfa6811e08fd895f216efa4188189',1,'export_widget::ExportWidget']]],
+  ['adjust_5fcolor_5ftemperature_10',['adjust_color_temperature',['../classcanva_1_1Canva.html#a2fe78aaa7a928fd5ecff4f6b64791568',1,'canva.Canva.adjust_color_temperature()'],['../classlayer_1_1Layer.html#a07a6bc63bab1df48aa549af72daa0776',1,'layer.Layer.adjust_color_temperature()'],['../classcanvas__widget_1_1CanvaWidget.html#a9a072e8fbb6edabba645f710d72d74f8',1,'canvas_widget.CanvaWidget.adjust_color_temperature()']]],
+  ['adjust_5ftemp_5fcolor_11',['adjust_temp_color',['../classmain__window_1_1MainWindow.html#a3ac68bb4e171f4277cf0d40147da12dd',1,'main_window.MainWindow.adjust_temp_color'],['../classmain__window_1_1MainWindow.html#ac7b242cca35a4fa628704280aac18585',1,'main_window.MainWindow.adjust_temp_color(self)']]],
+  ['advanced_5fcontent_12',['advanced_content',['../classnew__image__dialog_1_1NewImageDialog.html#ab8a322033eb2131a1b220a4dfeebd535',1,'new_image_dialog::NewImageDialog']]],
+  ['advanced_5ftoggle_13',['advanced_toggle',['../classnew__image__dialog_1_1NewImageDialog.html#a480358e382a8d56e3269c28bf677c013',1,'new_image_dialog::NewImageDialog']]],
+  ['advanced_5fwidget_14',['advanced_widget',['../classnew__image__dialog_1_1NewImageDialog.html#a5887b5ea931499788161f54a7149037f',1,'new_image_dialog::NewImageDialog']]],
+  ['app_2epy_15',['app.py',['../app_8py.html',1,'']]],
+  ['appearance_16',['appearance',['../namespaceappearance.html',1,'']]],
+  ['appearance_2epy_17',['appearance.py',['../appearance_8py.html',1,'']]],
+  ['appearancesettings_18',['AppearanceSettings',['../classEpiGimp_1_1config_1_1settings_1_1AppearanceSettings.html',1,'EpiGimp::config::settings']]],
+  ['appearancesettingspage_19',['AppearanceSettingsPage',['../classappearance_1_1AppearanceSettingsPage.html',1,'appearance']]],
+  ['apply_20',['apply',['../classEpiGimp_1_1tools_1_1base__tool_1_1BaseTool.html#a12d92d0ca42ef91b170616460342da66',1,'EpiGimp.tools.base_tool.BaseTool.apply()'],['../classEpiGimp_1_1tools_1_1base__tool_1_1ToolNotImplemented.html#afd47daf7d88ec793d2d6885ddc7b61a2',1,'EpiGimp.tools.base_tool.ToolNotImplemented.apply()'],['../classEpiGimp_1_1tools_1_1brush_1_1Brush.html#af8a70a62d7669005012ea76c1f4583ad',1,'EpiGimp.tools.brush.Brush.apply()'],['../classEpiGimp_1_1tools_1_1eraser_1_1Eraser.html#a2acb9211975ac831882898be3e3159b1',1,'EpiGimp.tools.eraser.Eraser.apply()'],['../classEpiGimp_1_1tools_1_1move_1_1MoveSelection.html#aab62ff7a897c05173889ab61df64d6e5',1,'EpiGimp.tools.move.MoveSelection.apply()'],['../classEpiGimp_1_1tools_1_1move_1_1Move.html#ad5a81ef389a05f4f66d29aafa0d1f7e3',1,'EpiGimp.tools.move.Move.apply()'],['../classEpiGimp_1_1tools_1_1selection_1_1RectangleSelection.html#a0db9cbbcfe05e3c7766f09495454a9f6',1,'EpiGimp.tools.selection.RectangleSelection.apply()'],['../classEpiGimp_1_1tools_1_1selection_1_1EllipseSelection.html#ab93d47406b6524ed35387014283c3bcf',1,'EpiGimp.tools.selection.EllipseSelection.apply()']]],
+  ['apply_5fbutton_21',['apply_button',['../classsettings__dialog_1_1SettingsDialog.html#a5852167dfe883fb8120d5d7e679f5868',1,'settings_dialog::SettingsDialog']]],
+  ['apply_5fsignal_22',['apply_signal',['../classsettings__dialog_1_1SettingsDialog.html#a9623fe41b6bcb4c4940066dde6567828',1,'settings_dialog::SettingsDialog']]],
+  ['author_5fedit_23',['author_edit',['../classmetadata__dialog_1_1EditableMetadataDialog.html#ad936516461ad8426045e0824ba82313c',1,'metadata_dialog::EditableMetadataDialog']]],
+  ['author_5ftitle_5fedit_24',['author_title_edit',['../classmetadata__dialog_1_1EditableMetadataDialog.html#a1a1aa7029ceeb1080a9ba0ee723e409f',1,'metadata_dialog::EditableMetadataDialog']]]
+];

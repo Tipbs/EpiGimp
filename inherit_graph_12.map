@@ -1,0 +1,17 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,191,80,217"/>
+<area shape="rect" id="Node000001" href="$classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html" title=" " alt="" coords="144,5,331,45"/>
+<area shape="poly" id="edge13_Node000000_Node000001" title=" " alt="" coords="50,177,77,116,99,83,126,55,146,43,149,48,130,59,103,87,82,119,54,179"/>
+<area shape="rect" id="Node000002" href="$classexport__widget_1_1ExportWidget.html" title=" " alt="" coords="134,70,341,95"/>
+<area shape="poly" id="edge14_Node000000_Node000002" title=" " alt="" coords="57,178,86,140,105,122,127,106,155,93,157,98,129,110,109,126,90,144,61,181"/>
+<area shape="rect" id="Node000003" href="$classmetadata__dialog_1_1EditableMetadataDialog.html" title=" " alt="" coords="143,120,332,160"/>
+<area shape="poly" id="edge15_Node000000_Node000003" title=" " alt="" coords="88,184,127,169,165,158,166,163,129,175,89,189"/>
+<area shape="rect" id="Node000004" href="$classmetadata__dialog_1_1MetadataDialog.html" title=" " alt="" coords="138,184,337,224"/>
+<area shape="poly" id="edge16_Node000000_Node000004" title=" " alt="" coords="94,201,138,201,138,207,94,207"/>
+<area shape="rect" id="Node000005" href="$classnew__image__dialog_1_1NewImageDialog.html" title=" " alt="" coords="128,248,347,288"/>
+<area shape="poly" id="edge17_Node000000_Node000005" title=" " alt="" coords="89,219,129,233,166,245,165,250,127,239,88,224"/>
+<area shape="rect" id="Node000006" href="$classsettings__dialog_1_1SettingsDialog.html" title=" " alt="" coords="148,312,327,352"/>
+<area shape="poly" id="edge18_Node000000_Node000006" title=" " alt="" coords="62,227,91,264,130,298,152,309,150,314,126,302,87,268,58,231"/>
+<area shape="rect" id="Node000007" href="$classstartup__widget_1_1StartupDialog.html" title=" " alt="" coords="131,377,343,402"/>
+<area shape="poly" id="edge19_Node000000_Node000007" title=" " alt="" coords="53,229,63,260,79,296,101,332,130,362,152,374,149,379,126,366,96,335,74,299,58,262,48,231"/>
+</map>

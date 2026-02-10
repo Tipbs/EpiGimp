@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['epigimp_0',['EpiGimp',['../namespaceEpiGimp.html',1,'']]],
+  ['epigimp_3a_3aapp_1',['app',['../namespaceEpiGimp_1_1app.html',1,'EpiGimp']]],
+  ['epigimp_3a_3aconfig_2',['config',['../namespaceEpiGimp_1_1config.html',1,'EpiGimp']]],
+  ['epigimp_3a_3aconfig_3a_3asettings_3',['settings',['../namespaceEpiGimp_1_1config_1_1settings.html',1,'EpiGimp::config']]],
+  ['epigimp_3a_3aplugins_4',['plugins',['../namespaceEpiGimp_1_1plugins.html',1,'EpiGimp']]],
+  ['epigimp_3a_3aplugins_3a_3aplugin_5fmanager_5',['plugin_manager',['../namespaceEpiGimp_1_1plugins_1_1plugin__manager.html',1,'EpiGimp::plugins']]],
+  ['epigimp_3a_3arender_6',['render',['../namespaceEpiGimp_1_1render.html',1,'EpiGimp']]],
+  ['epigimp_3a_3arender_3a_3aqt_5fpainter_7',['qt_painter',['../namespaceEpiGimp_1_1render_1_1qt__painter.html',1,'EpiGimp::render']]],
+  ['epigimp_3a_3atools_8',['tools',['../namespaceEpiGimp_1_1tools.html',1,'EpiGimp']]],
+  ['epigimp_3a_3atools_3a_3abase_5ftool_9',['base_tool',['../namespaceEpiGimp_1_1tools_1_1base__tool.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3atools_3a_3abrush_10',['brush',['../namespaceEpiGimp_1_1tools_1_1brush.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3atools_3a_3aeraser_11',['eraser',['../namespaceEpiGimp_1_1tools_1_1eraser.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3atools_3a_3amove_12',['move',['../namespaceEpiGimp_1_1tools_1_1move.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3atools_3a_3apencil_13',['pencil',['../namespaceEpiGimp_1_1tools_1_1pencil.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3atools_3a_3aselection_14',['selection',['../namespaceEpiGimp_1_1tools_1_1selection.html',1,'EpiGimp::tools']]],
+  ['epigimp_3a_3autils_15',['utils',['../namespaceEpiGimp_1_1utils.html',1,'EpiGimp']]],
+  ['epigimp_3a_3autils_3a_3acolor_5futils_16',['color_utils',['../namespaceEpiGimp_1_1utils_1_1color__utils.html',1,'EpiGimp::utils']]],
+  ['export_5fwidget_17',['export_widget',['../namespaceexport__widget.html',1,'']]]
+];

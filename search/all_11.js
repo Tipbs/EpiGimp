@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['rating_5fcombo_0',['rating_combo',['../classmetadata__dialog_1_1EditableMetadataDialog.html#ab28c016586ba432d6520e4e8c5f2d964',1,'metadata_dialog::EditableMetadataDialog']]],
+  ['recent_5flist_1',['recent_list',['../classstartup__widget_1_1StartupDialog.html#a1fbd2025bbb21c8e7d87bd45663db875',1,'startup_widget::StartupDialog']]],
+  ['rect_5fselect_2',['rect_select',['../classtools__widget_1_1ToolsWidget.html#a51fc1075b3eda333fe7cbda2da6ce3ec',1,'tools_widget::ToolsWidget']]],
+  ['rectangleselection_3',['RectangleSelection',['../classEpiGimp_1_1tools_1_1selection_1_1RectangleSelection.html',1,'EpiGimp::tools::selection']]],
+  ['reject_4',['reject',['../classmetadata__dialog_1_1EditableMetadataDialog.html#ae73d4ea12d681599272caa6f9fa62823',1,'metadata_dialog.EditableMetadataDialog.reject'],['../classnew__image__dialog_1_1NewImageDialog.html#afe66407aa028513f115cefe59790b05b',1,'new_image_dialog.NewImageDialog.reject'],['../classexport__widget_1_1ExportWidget.html#aee2199571bbffae9213b8a57009cfbe3',1,'export_widget.ExportWidget.reject']]],
+  ['remove_5fcurrent_5flayer_5',['remove_current_layer',['../classlayers__widget_1_1LayersWidget.html#a3b034fda86a5e4f3d8c289a263398284',1,'layers_widget::LayersWidget']]],
+  ['render_6',['render',['../classlayers__widget_1_1LayersWidget.html#adf5d216f8f27b80baec1e76043f2dfd0',1,'layers_widget::LayersWidget']]],
+  ['reset_5fbtn_7',['reset_btn',['../classcolor__adjustment__dialog_1_1ColorTemperatureDialog.html#af60d35287fe9ea1a3e23855b137b35cd',1,'color_adjustment_dialog.ColorTemperatureDialog.reset_btn'],['../classnew__image__dialog_1_1NewImageDialog.html#ab92d123796ecd4a2745a140eb6ba9b14',1,'new_image_dialog.NewImageDialog.reset_btn']]],
+  ['reset_5foffset_8',['reset_offset',['../classEpiGimp_1_1tools_1_1move_1_1MoveSelection.html#af1584c4ffbec297ebf431d00188bd516',1,'EpiGimp::tools::move::MoveSelection']]],
+  ['resizeevent_9',['resizeEvent',['../classmain__window_1_1MainWindow.html#a101cc1c124b17a592101484f0f04db6a',1,'main_window::MainWindow']]],
+  ['resolution_5funit_10',['resolution_unit',['../classnew__image__dialog_1_1NewImageDialog.html#a0cd1ec8789b9218a92aab76a3164b4e7',1,'new_image_dialog::NewImageDialog']]],
+  ['restore_5fwindow_11',['restore_window',['../classEpiGimp_1_1config_1_1settings_1_1GeneralSettings.html#a7b0dee3743d40935c8958c22b40e267f',1,'EpiGimp.config.settings.GeneralSettings.restore_window'],['../classgeneral_1_1GeneralSettingsPage.html#a7c47411ca5f7387d90171d4692ba9199',1,'general.GeneralSettingsPage.restore_window']]],
+  ['rgba_5ftuple_5fto_5fhex_12',['rgba_tuple_to_hex',['../namespaceEpiGimp_1_1utils_1_1color__utils.html#a1592530e094abc01af9f96080e988dcc',1,'EpiGimp::utils::color_utils']]],
+  ['rotate_5f180_13',['rotate_180',['../classcanva_1_1Canva.html#ab97cd617b07ff161f5012a3224c88e22',1,'canva.Canva.rotate_180()'],['../classlayer_1_1Layer.html#a3f3bf638e6904b357fdbb561ed62b9d9',1,'layer.Layer.rotate_180()']]],
+  ['rotate_5f90_5fclockwise_14',['rotate_90_clockwise',['../classcanva_1_1Canva.html#a0f382b8665bc95f7b16f7d564f0c5315',1,'canva.Canva.rotate_90_clockwise()'],['../classlayer_1_1Layer.html#a0e2c632c9a8f228fc1676b599540cecc',1,'layer.Layer.rotate_90_clockwise()']]],
+  ['rotate_5f90_5fcounterclockwise_15',['rotate_90_counterclockwise',['../classcanva_1_1Canva.html#addcec8cee190df583cb7b1ddeec70bb0',1,'canva.Canva.rotate_90_counterclockwise()'],['../classlayer_1_1Layer.html#a836d136820af2591fe9a6fb0775c5e40',1,'layer.Layer.rotate_90_counterclockwise()']]],
+  ['rotate_5fact_16',['rotate_act',['../classmain__window_1_1MainWindow.html#a83e9885fade66e484a40c0505c0b6d83',1,'main_window::MainWindow']]],
+  ['run_5fapp_17',['run_app',['../namespaceEpiGimp_1_1app.html#afa6c1867f0de4b029e9ad00a8cbe53e2',1,'EpiGimp::app']]]
+];
