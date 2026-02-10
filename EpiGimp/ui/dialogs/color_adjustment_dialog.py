@@ -22,7 +22,7 @@ class ColorTemperatureDialog(QDialog):
         
         if self.canva_widget:
             canva = self.canva_widget.canva
-            active_layer = canva.get_img()
+            active_layer = canva.active_layer
             if active_layer:
                 self.original_pixels = active_layer.pixels.copy()
         
@@ -255,7 +255,7 @@ class ColorTemperatureDialog(QDialog):
         
         if self.canva_widget and self.original_pixels is not None:
             canva = self.canva_widget.canva
-            active_layer = canva.get_img()
+            active_layer = canva.active_layer
             
             if active_layer:
                 opacity = self.opacity_spinbox.value() / 100.0
@@ -284,7 +284,7 @@ class ColorTemperatureDialog(QDialog):
     def _restore_original(self):
         if self.canva_widget and self.original_pixels is not None:
             canva = self.canva_widget.canva
-            active_layer = canva.get_img()
+            active_layer = canva.active_layer
             if active_layer:
                 active_layer.pixels = self.original_pixels.copy()
                 self.canva_widget.draw_canva()
@@ -321,7 +321,7 @@ class ColorTemperatureDialog(QDialog):
         opacity = self.opacity_spinbox.value() / 100.0
         
         canva = self.canva_widget.canva
-        active_layer = canva.get_img()
+        active_layer = canva.active_layer
         
         if not active_layer:
             return
