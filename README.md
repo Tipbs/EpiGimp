@@ -106,6 +106,7 @@ python main.py
 - Project specification of **EpiGimp**: [docs/PROJECT_SPECIFICATION_EN.md](docs/PROJECT_SPECIFICATION_EN.md)
 - CI/CD specification: [docs/CI_CD.md]([docs/CI_CD.md])
 - Shortcuts specification: [docs/SHORTCUTS.md]([docs/SHORTCUTS.md])
+- Doxygen: [https://tipbs.github.io/EpiGimp/](https://tipbs.github.io/EpiGimp/)
 
 ## Development & Quality Assurance
 
