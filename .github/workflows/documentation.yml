@@ -1,0 +1,39 @@
+name: Deploy Doxygen Docs
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to main
+
+permissions:
+  contents: write # Required to push to the gh-pages branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout your code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Install Doxygen and Graphviz (for diagrams)
+      - name: Install Doxygen
+        run: sudo apt-get install -y doxygen graphviz
+
+      # 3. Generate the Documentation
+      - name: Run Doxygen
+        run: doxygen Doxyfile
+
+      # 4. Create .nojekyll file (CRITICAL STEP)
+      # Doxygen uses underscores (e.g. _init_.html) which GitHub ignores by default.
+      # This file tells GitHub "This is not a Jekyll site, serve files as-is."
+      - name: Create .nojekyll
+        run: touch docs/DOXYGEN/html/.nojekyll
+
+      # 5. Deploy to the gh-pages branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/DOXYGEN/html # The folder doxygen generated
+          force_orphan: true # Clean the branch history every time (optional but cleaner)
