@@ -52,14 +52,14 @@ jobs:
               if: runner.os == 'Linux'
               with:
                     name: EpiGimp-Linux
-                    path: dist/EpiGimp/EpiGimp
+                    path: dist/EpiGimp/
             
             - name: Upload artifact (Windows)
               uses: actions/upload-artifact@v6
               if: runner.os == 'Windows'
               with:
                     name: EpiGimp-Windows
-                    path: dist/EpiGimp/EpiGimp.exe
+                    path: dist/EpiGimp/
             
             - name: Run tests
               if: false
