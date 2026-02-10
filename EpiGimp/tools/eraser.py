@@ -34,7 +34,7 @@ class Eraser(BaseTool):
         painter.setBrush(Qt.transparent)
         painter.setPen(Qt.NoPen) # No outline
         radius = self.size / 2
-        rect = QRectF(pos.x() - radius - 5, pos.y() - radius - 27, 
+        rect = QRectF(pos.x() - radius, pos.y() - radius, 
                       self.size, self.size)
         painter.drawEllipse(rect)
         painter.end()

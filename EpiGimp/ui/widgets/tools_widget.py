@@ -5,6 +5,8 @@ from PySide6.QtCore import Qt, Signal
 from EpiGimp.tools.base_tool import ToolNotImplemented
 from EpiGimp.tools.brush import Brush
 from EpiGimp.tools.eraser import Eraser
+from EpiGimp.tools.selection import RectangleSelection, EllipseSelection
+from EpiGimp.tools.move import Move
 
 class ToolsWidget(QWidget):
     """
@@ -31,15 +33,19 @@ class ToolsWidget(QWidget):
         self.btn_group.idClicked.connect(self._on_tool_clicked)
 
         # 2. Add Standard Tools
-        # Format: (Name, Icon Name/Path, Row, Col)
+        # Format: (Tool Instance, Row, Col)
         self.brush = Brush()
         self.eraser = Eraser()
+        self.rect_select = RectangleSelection()
+        self.ellipse_select = EllipseSelection()
+        self.move = Move()
+        
         tools_config = [
-            (self.brush, 0, 0),
-            (self.eraser, 0, 1),
-            (ToolNotImplemented(), 1, 0),
-            (ToolNotImplemented(), 1, 1),
-            (ToolNotImplemented(), 2, 0),
+            (self.rect_select, 0, 0),
+            (self.ellipse_select, 0, 1),
+            (self.move, 1, 0),
+            (self.brush, 1, 1),
+            (self.eraser, 2, 0),
             (ToolNotImplemented(), 2, 1),
             (ToolNotImplemented(), 3, 0),
             (ToolNotImplemented(), 3, 1),
@@ -58,7 +64,7 @@ class ToolsWidget(QWidget):
             self.grid_layout.addWidget(btn, r, c)
             self.btn_group.addButton(btn)
             
-            # Set default tool
+            # Set default tool to Brush
             if tool.name == "Brush":
                 btn.setChecked(True)
 

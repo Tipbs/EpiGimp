@@ -160,7 +160,9 @@ class StartupDialog(QDialog):
             "EpiGimp 1.0.0 - Initial Release\n\n"
             "Features:\n"
             "• Layer support\n"
-            "• Basic drawing tools\n"
+            "• Basic drawing tools (Brush, Eraser)\n"
+            "• Selection tools (Rectangle, Ellipse)\n"
+            "• Selection operations (Copy, Cut, Paste, Delete, Fill)\n"
             "• Image import/export\n"
             "• Customizable interface\n",
             self

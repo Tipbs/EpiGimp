@@ -273,3 +273,162 @@ class Layer:
         # the QImage view remains valid, but calling update might be safer if implementation changes.
         # However, to be consistent with transform methods:
         self._update_qimage()
+
+    # =========================================================================
+    # Selection Operations
+    # =========================================================================
+
+    def copy_selection(self, rect) -> Optional[np.ndarray]:
+        """
+        Copy pixels within a rectangular selection.
+
+        Args:
+            rect: QRect defining the selection bounds
+
+        Returns:
+            np.ndarray: Copied pixel data, or None if invalid
+        """
+        if rect is None or rect.isEmpty():
+            return None
+
+        x, y = rect.x(), rect.y()
+        w, h = rect.width(), rect.height()
+
+        # Ensure bounds are within image
+        h_img, w_img = self.pixels.shape[:2]
+        x = max(0, min(x, w_img - 1))
+        y = max(0, min(y, h_img - 1))
+        w = min(w, w_img - x)
+        h = min(h, h_img - y)
+
+        if w <= 0 or h <= 0:
+            return None
+
+        # Copy the selected region
+        return self.pixels[y:y+h, x:x+w].copy()
+
+    def delete_selection(self, rect, selection_type='rectangle') -> None:
+        """
+        Delete pixels within a selection (make transparent).
+
+        Args:
+            rect: QRect defining the selection bounds
+            selection_type: 'rectangle' or 'ellipse'
+        """
+        if rect is None or rect.isEmpty():
+            return
+
+        x, y = rect.x(), rect.y()
+        w, h = rect.width(), rect.height()
+
+        # Ensure bounds are within image
+        h_img, w_img = self.pixels.shape[:2]
+        x = max(0, min(x, w_img - 1))
+        y = max(0, min(y, h_img - 1))
+        w = min(w, w_img - x)
+        h = min(h, h_img - y)
+
+        if w <= 0 or h <= 0:
+            return
+
+        if selection_type == 'ellipse':
+            # Create elliptical mask
+            cy, cx = h / 2, w / 2
+            yy, xx = np.ogrid[:h, :w]
+            mask = ((xx - cx) ** 2) / (cx ** 2) + ((yy - cy) ** 2) / (cy ** 2) <= 1
+            # Apply mask: set alpha to 0 where mask is True
+            self.pixels[y:y+h, x:x+w][mask] = [0, 0, 0, 0]
+        else:
+            # Rectangle: just clear the region
+            self.pixels[y:y+h, x:x+w] = [0, 0, 0, 0]
+
+        self._update_qimage()
+
+    def fill_selection(self, rect, color: Tuple[int, int, int, int], selection_type='rectangle') -> None:
+        """
+        Fill pixels within a selection with a color.
+
+        Args:
+            rect: QRect defining the selection bounds
+            color: RGBA color tuple (0-255)
+            selection_type: 'rectangle' or 'ellipse'
+        """
+        if rect is None or rect.isEmpty():
+            return
+
+        x, y = rect.x(), rect.y()
+        w, h = rect.width(), rect.height()
+
+        # Ensure bounds are within image
+        h_img, w_img = self.pixels.shape[:2]
+        x = max(0, min(x, w_img - 1))
+        y = max(0, min(y, h_img - 1))
+        w = min(w, w_img - x)
+        h = min(h, h_img - y)
+
+        if w <= 0 or h <= 0:
+            return
+
+        if selection_type == 'ellipse':
+            # Create elliptical mask
+            cy, cx = h / 2, w / 2
+            yy, xx = np.ogrid[:h, :w]
+            mask = ((xx - cx) ** 2) / (cx ** 2) + ((yy - cy) ** 2) / (cy ** 2) <= 1
+            # Apply color where mask is True
+            self.pixels[y:y+h, x:x+w][mask] = color
+        else:
+            # Rectangle: fill the region
+            self.pixels[y:y+h, x:x+w] = color
+
+        self._update_qimage()
+
+    def move_selection(self, source_rect, dest_point, selection_type='rectangle', clear_source=True) -> None:
+        """
+        Move pixels from source rectangle to destination point.
+
+        Args:
+            source_rect: QRect defining the source selection bounds
+            dest_point: QPoint for the destination (top-left corner)
+            selection_type: 'rectangle' or 'ellipse'
+            clear_source: Whether to clear the source area after copying
+        """
+        if source_rect is None or source_rect.isEmpty():
+            return
+
+        # Copy the source selection
+        copied_data = self.copy_selection(source_rect)
+        if copied_data is None:
+            return
+
+        # Clear source if requested
+        if clear_source:
+            self.delete_selection(source_rect, selection_type)
+
+        # Paste at destination
+        dest_x, dest_y = dest_point.x(), dest_point.y()
+        h, w = copied_data.shape[:2]
+        
+        # Ensure destination is within bounds
+        h_img, w_img = self.pixels.shape[:2]
+        dest_x = max(0, min(dest_x, w_img - 1))
+        dest_y = max(0, min(dest_y, h_img - 1))
+        
+        # Adjust size if goes beyond bounds
+        paste_w = min(w, w_img - dest_x)
+        paste_h = min(h, h_img - dest_y)
+        
+        if paste_w <= 0 or paste_h <= 0:
+            return
+
+        if selection_type == 'ellipse':
+            # Create elliptical mask for pasting
+            cy, cx = paste_h / 2, paste_w / 2
+            yy, xx = np.ogrid[:paste_h, :paste_w]
+            mask = ((xx - cx) ** 2) / (cx ** 2) + ((yy - cy) ** 2) / (cy ** 2) <= 1
+            # Paste only where mask is True
+            self.pixels[dest_y:dest_y+paste_h, dest_x:dest_x+paste_w][mask] = copied_data[:paste_h, :paste_w][mask]
+        else:
+            # Rectangle: paste the entire region
+            self.pixels[dest_y:dest_y+paste_h, dest_x:dest_x+paste_w] = copied_data[:paste_h, :paste_w]
+
+        self._update_qimage()
