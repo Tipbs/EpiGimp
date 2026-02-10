@@ -1,5 +1,10 @@
 # EpiGimp
 
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-GPLv3-green)
+![Build Status](https://img.shields.io/github/actions/workflow/status/YourUsername/EpiGimp/build-shared.yml)
+![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)
+
 EpiGimp is a lightweight, GIMP-like raster image editor built with Python and PySide6 (Qt). It features a layer-based architecture, essential drawing tools, and advanced metadata editing capabilities, serving as a robust prototype for image manipulation.
 
 ## Key Features
@@ -28,7 +33,12 @@ EpiGimp is a lightweight, GIMP-like raster image editor built with Python and Py
 - Configurable settings (Themes, Shortcuts).
 - Startup Welcome Screen with recent file history.
 
-## 🛠️ Architecture
+**Data Integrity**:
+- Native Format: Save projects as `.epigimp` binary files to preserve layers and metadata.
+- Metadata Editor: View and edit EXIF, IPTC, and XMP data standards.
+- Export: Support for industry-standard formats (PNG, JPG, TIFF).
+
+## Architecture
 The application is structured to separate core logic from the UI:
 
 - `EpiGimp/core/`: Handles the business logic.
@@ -90,33 +100,43 @@ Execute the main entry point:
 python main.py
 ```
 
-## ⌨️ Shortcuts
+## Documentation
 
-Customize these in Settings > Shortcuts.
-| New Image              | `Ctrl+N`       |
-|------------------------|----------------|
-| Open File (in Project) | `Ctrl+O`       |
-| Open File (New Tab)    | `Ctrl+Shift+O` |
-| Save Project           | `Ctrl+S`       |
-| Load Project           | `Ctrl+L`       |
-| Export Image           | `Ctrl+E`       |
-| Toggle Fullscreen      | `F11`          |
+- Serialization specification of `.epigimp`: [docs/FILE_FORMAT.md](docs/FILE_FORMAT.md)
+- Project specification of **EpiGimp**: [docs/PROJECT_SPECIFICATION_EN.md](docs/PROJECT_SPECIFICATION_EN.md)
+- CI/CD specification: [docs/CI_CD.md]([docs/CI_CD.md])
+- Shortcuts specification: [docs/SHORTCUTS.md]([docs/SHORTCUTS.md])
 
-## Development & Testing
+## Development & Quality Assurance
 
-We use **pytest** for unit testing core logic.
+We adhere to strict code quality standards.
 
-To run the test suite:
+- **Testing**: Run the full test suite with pytest.
 ```bash
-pytest tests/
+    pytest tests/ --cov=EpiGimp
 ```
 
-**Contributing**
+- **Linting**: We use flake8 for linting and black for formatting.
+```bash
+    flake8 .
+    black . --check
+```
+
+- **Type Checking**: Static analysis via mypy.
+```bash
+mypy EpiGimp/
+```
+
+## Contributing
 Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on:
 
 - GitFlow branching strategy (main, dev, feature/).
 - Coding standards (PEP 8, Type Hinting).
 - Commit message conventions.
+
+## Roadmap & Changelog
+
+Check our [Github Project](https://github.com/users/Tipbs/projects/1) and our [Milestones](https://github.com/Tipbs/EpiGimp/milestones) for a roadmap.
 
 ## License
 
