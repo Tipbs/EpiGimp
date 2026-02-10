@@ -41,6 +41,11 @@ class Canva:
         # Instance specific counter for layer naming
         self.layer_count = 0
 
+        # Selection state
+        self.selection_rect = None  # QRect or None
+        self.selection_type = None  # 'rectangle', 'ellipse', or None
+        self.clipboard = None  # Stores copied pixel data
+
         # Initialize background
         self.add_layer(name='Background', color=background)
 
@@ -553,3 +558,130 @@ class Canva:
                 'layer_count': len(self.layers),
                 'project_path': self.project_path,
                 }
+
+    # =========================================================================
+    # Selection Management
+    # =========================================================================
+
+    def set_selection(self, rect, selection_type='rectangle'):
+        """
+        Set the current selection region.
+
+        Args:
+            rect: QRect defining the selection bounds
+            selection_type (str): Type of selection ('rectangle' or 'ellipse')
+        """
+        self.selection_rect = rect
+        self.selection_type = selection_type
+
+    def get_selection(self):
+        """
+        Get the current selection.
+
+        Returns:
+            tuple: (selection_rect, selection_type) or (None, None) if no selection
+        """
+        return (self.selection_rect, self.selection_type)
+
+    def has_selection(self):
+        """Check if there's an active selection."""
+        return self.selection_rect is not None
+
+    def clear_selection(self):
+        """Clear the current selection."""
+        self.selection_rect = None
+        self.selection_type = None
+
+    def get_selected_layers(self):
+        """
+        Get all layers that intersect with the selection region.
+
+        Returns:
+            list: List of Layer objects that intersect with the selection
+        """
+        if not self.has_selection():
+            return []
+
+        # For now, return all visible layers
+        # In a more advanced implementation, this would check which layers
+        # actually have pixels within the selection bounds
+        return [layer for layer in self.layers if layer.visibility]
+
+    def copy_selection(self) -> bool:
+        """
+        Copy the current selection to clipboard.
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self.has_selection() or not self.active_layer:
+            return False
+
+        copied_data = self.active_layer.copy_selection(self.selection_rect)
+        if copied_data is not None:
+            self.clipboard = copied_data
+            return True
+        return False
+
+    def cut_selection(self) -> bool:
+        """
+        Cut the current selection (copy then delete).
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self.has_selection() or not self.active_layer:
+            return False
+
+        # Copy first
+        if self.copy_selection():
+            # Then delete
+            self.active_layer.delete_selection(self.selection_rect, self.selection_type)
+            return True
+        return False
+
+    def delete_selection(self) -> bool:
+        """
+        Delete the current selection (make transparent).
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self.has_selection() or not self.active_layer:
+            return False
+
+        self.active_layer.delete_selection(self.selection_rect, self.selection_type)
+        return True
+
+    def paste_selection(self) -> bool:
+        """
+        Paste clipboard content as a new layer.
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if self.clipboard is None:
+            return False
+
+        # Create a new layer from clipboard data
+        layer_name = self.default_name()
+        new_layer = Layer(pixels=self.clipboard.copy(), name=f"Pasted {layer_name}")
+        self.layers.append(new_layer)
+        self.active_layer = new_layer
+        return True
+
+    def fill_selection(self, color: Tuple[int, int, int, int]) -> bool:
+        """
+        Fill the current selection with a color.
+
+        Args:
+            color: RGBA color tuple (0-255)
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self.has_selection() or not self.active_layer:
+            return False
+
+        self.active_layer.fill_selection(self.selection_rect, color, self.selection_type)
+        return True

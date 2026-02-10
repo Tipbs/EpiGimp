@@ -53,6 +53,11 @@ class MainWindow(QMainWindow):
         # logic connections
         self._connect_signals()
 
+        # Set initial tool
+        initial_tool = self.tools_panel.get_current_tool()
+        if initial_tool:
+            self.on_tool_selected(initial_tool)
+
         # Load initial settings
         self.load_settings(0)
         self.settings.apply_signal[int].connect(lambda: self.load_settings(1))
@@ -89,6 +94,7 @@ class MainWindow(QMainWindow):
         # Canvas <-> Layers connections
         self.canvas_widget.currentChanged.connect(lambda index: self.layers_widget.set_canva(self.current_canva()))
         self.image_loaded.connect(self.canvas_widget.add_canva)
+        self.image_loaded.connect(self._set_tool_on_new_canvas)  # Set tool on new canvases
         self.canvas_widget.currentChanged.connect(self.canva_update)
         
         # Layer Widget Buttons
@@ -103,6 +109,9 @@ class MainWindow(QMainWindow):
             lambda: self.swap_layer(self.layers_widget.list_widget.currentRow(), self.layers_widget.list_widget.currentRow() + 1)
         )
         self.layers_widget.list_widget.currentItemChanged.connect(self.change_canva)
+
+        # Tool selection
+        self.tools_panel.toolSelected.connect(self.on_tool_selected)
 
         # Drawing
         self.canvas_widget.mouse_moved.connect(self.drawing)
@@ -177,6 +186,29 @@ class MainWindow(QMainWindow):
             cw.draw_canva()
 
     @Slot()
+    def on_tool_selected(self, tool) -> None:
+        """
+        Handle tool selection from the tools widget.
+
+        Args:
+            tool: The selected tool instance
+        """
+        # Set tool for all canvas widgets
+        for i in range(self.canvas_widget.count()):
+            widget = self.canvas_widget.widget(i)
+            if isinstance(widget, CanvaWidget):
+                widget.set_tool(tool)
+
+    @Slot()
+    def _set_tool_on_new_canvas(self) -> None:
+        """Set the current tool on the most recently created canvas."""
+        cw = self.current_canva_widget()
+        if cw:
+            current_tool = self.tools_panel.get_current_tool()
+            if current_tool:
+                cw.set_tool(current_tool)
+
+    @Slot()
     def canva_update(self) -> None:
         """Updates the layers widget when the canvas changes (e.g. switching tabs)."""
         cw = self.current_canva_widget()
@@ -217,6 +249,98 @@ class MainWindow(QMainWindow):
         if self.canvas_widget.count() == 0:
             return
         self.current_canva_widget().del_layer(idx)
+
+    # =========================================================================
+    # Selection Operations
+    # =========================================================================
+
+    def select_all(self) -> None:
+        """Select the entire canvas."""
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        if canva and cw:
+            # Create a rectangle covering the entire canvas
+            from PySide6.QtCore import QRect
+            full_rect = QRect(0, 0, canva.shape[1], canva.shape[0])
+            canva.set_selection(full_rect, 'rectangle')
+            cw.update()
+
+    def deselect(self) -> None:
+        """Clear the current selection."""
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        if canva and cw:
+            canva.clear_selection()
+            cw.update()
+
+    # =========================================================================
+    # Edit Operations
+    # =========================================================================
+
+    def copy_selection(self) -> None:
+        """Copy the current selection to clipboard."""
+        canva = self.current_canva()
+        if canva and canva.has_selection():
+            if canva.copy_selection():
+                self.statusBar().showMessage("Selection copied", 2000)
+            else:
+                self.statusBar().showMessage("Failed to copy selection", 2000)
+
+    def cut_selection(self) -> None:
+        """Cut the current selection (copy then delete)."""
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        if canva and cw and canva.has_selection():
+            if canva.cut_selection():
+                cw.draw_canva()
+                self.statusBar().showMessage("Selection cut", 2000)
+            else:
+                self.statusBar().showMessage("Failed to cut selection", 2000)
+
+    def paste_selection(self) -> None:
+        """Paste clipboard content as a new layer."""
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        if canva and cw:
+            if canva.paste_selection():
+                # Update layers widget
+                self.layers_widget.update_layer_from_canva(canva)
+                cw.draw_canva()
+                self.statusBar().showMessage("Pasted as new layer", 2000)
+            else:
+                self.statusBar().showMessage("Nothing to paste", 2000)
+
+    def delete_selection(self) -> None:
+        """Delete the current selection."""
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        if canva and cw and canva.has_selection():
+            if canva.delete_selection():
+                cw.draw_canva()
+                self.statusBar().showMessage("Selection deleted", 2000)
+            else:
+                self.statusBar().showMessage("Failed to delete selection", 2000)
+
+    def fill_selection(self) -> None:
+        """Fill the current selection with a color."""
+        from PySide6.QtWidgets import QColorDialog
+        
+        canva = self.current_canva()
+        cw = self.current_canva_widget()
+        
+        if not canva or not cw or not canva.has_selection():
+            QMessageBox.warning(self, "No Selection", "Please create a selection first.")
+            return
+        
+        # Open color picker
+        color = QColorDialog.getColor()
+        if color.isValid():
+            rgba = (color.red(), color.green(), color.blue(), color.alpha())
+            if canva.fill_selection(rgba):
+                cw.draw_canva()
+                self.statusBar().showMessage("Selection filled", 2000)
+            else:
+                self.statusBar().showMessage("Failed to fill selection", 2000)
 
     # =========================================================================
     # Actions & Menus
@@ -286,6 +410,36 @@ class MainWindow(QMainWindow):
         self._temp_adjust_act = QAction('Adjust Color Temperature...', self)
         self._temp_adjust_act.triggered.connect(self.adjust_temp_color)
 
+        # Selection Actions
+        self.select_all_act = QAction('Select All', self)
+        self.select_all_act.setShortcut(QKeySequence('Ctrl+A'))
+        self.select_all_act.triggered.connect(self.select_all)
+
+        self.deselect_act = QAction('Deselect', self)
+        self.deselect_act.setShortcut(QKeySequence('Ctrl+Shift+A'))
+        self.deselect_act.triggered.connect(self.deselect)
+
+        # Edit Actions
+        self.copy_act = QAction('Copy', self)
+        self.copy_act.setShortcut(QKeySequence('Ctrl+C'))
+        self.copy_act.triggered.connect(self.copy_selection)
+
+        self.cut_act = QAction('Cut', self)
+        self.cut_act.setShortcut(QKeySequence('Ctrl+X'))
+        self.cut_act.triggered.connect(self.cut_selection)
+
+        self.paste_act = QAction('Paste', self)
+        self.paste_act.setShortcut(QKeySequence('Ctrl+V'))
+        self.paste_act.triggered.connect(self.paste_selection)
+
+        self.delete_sel_act = QAction('Delete Selection', self)
+        self.delete_sel_act.setShortcut(QKeySequence('Delete'))
+        self.delete_sel_act.triggered.connect(self.delete_selection)
+
+        self.fill_act = QAction('Fill Selection...', self)
+        self.fill_act.setShortcut(QKeySequence('Ctrl+F'))
+        self.fill_act.triggered.connect(self.fill_selection)
+
     def _safe_transform(self, method_name: str) -> None:
         """Helper to apply transforms only if a widget exists."""
         cw = self.current_canva_widget()
@@ -308,6 +462,15 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.settings_act)
         file_menu.addAction(self.exit_act)
 
+        # Edit Menu
+        edit_menu = menu_bar.addMenu('Edit')
+        edit_menu.addAction(self.copy_act)
+        edit_menu.addAction(self.cut_act)
+        edit_menu.addAction(self.paste_act)
+        edit_menu.addSeparator()
+        edit_menu.addAction(self.delete_sel_act)
+        edit_menu.addAction(self.fill_act)
+
         # Display Menu
         display_menu = menu_bar.addMenu('Display')
         display_menu.addAction(self.fullscreen_act)
@@ -323,6 +486,11 @@ class MainWindow(QMainWindow):
         transform_menu.addAction(self.rotate_act)
         transform_menu.addAction(self._rotate_ccw_act)
         transform_menu.addAction(self._rotate_180_act)
+
+        # Select Menu
+        select_menu = menu_bar.addMenu('Select')
+        select_menu.addAction(self.select_all_act)
+        select_menu.addAction(self.deselect_act)
 
         # Color Menu
         color_menu = menu_bar.addMenu('Color')

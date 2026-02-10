@@ -4,7 +4,7 @@ from typing import Optional, Dict
 
 from PySide6.QtCore import Qt, QPoint, Signal, Slot
 from PySide6.QtWidgets import QTabWidget, QWidget
-from PySide6.QtGui import QPainter, QPixmap, QMouseEvent, QPaintEvent, QImage
+from PySide6.QtGui import QPainter, QPixmap, QMouseEvent, QPaintEvent, QImage, QPen
 
 from EpiGimp.core.fileio.loader_png import LoaderPng
 from EpiGimp.core.canva import Canva
@@ -108,6 +108,14 @@ class CanvaWidget(QWidget):
         self.original_temp: float = 6500.0
         self.target_temp: float = 6500.0
         
+        # Tool state
+        self.current_tool = None
+        
+        # Move selection state
+        self.moving_selection = False
+        self.move_start_point = None
+        self._temp_selection_offset = QPoint(0, 0)
+        
         # Signals
         self.layer_changed.connect(self.draw_canva)
         
@@ -172,6 +180,40 @@ class CanvaWidget(QWidget):
         """
         painter = QPainter(self)
         painter.drawPixmap(0, 0, self.canvas_buffer)
+        
+        # Draw selection overlay if there's an active selection
+        if self.canva.has_selection():
+            selection_rect, selection_type = self.canva.get_selection()
+            if selection_rect and not selection_rect.isEmpty():
+                # If moving, show selection at offset position
+                display_rect = selection_rect
+                if self.moving_selection and not self._temp_selection_offset.isNull():
+                    display_rect = selection_rect.translated(self._temp_selection_offset)
+                
+                # Draw selection with dashed line
+                pen = QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.DashLine)
+                painter.setPen(pen)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+                
+                if selection_type == 'ellipse':
+                    painter.drawEllipse(display_rect)
+                else:  # rectangle
+                    painter.drawRect(display_rect)
+        
+        # Draw current selection being created (if using selection tool)
+        if self.current_tool and hasattr(self.current_tool, 'get_selection') and not self.moving_selection:
+            temp_selection = self.current_tool.get_selection()
+            if temp_selection and not temp_selection.isEmpty():
+                pen = QPen(Qt.GlobalColor.white, 1, Qt.PenStyle.DashLine)
+                painter.setPen(pen)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+                
+                if hasattr(self.current_tool, 'name') and 'Ellipse' in self.current_tool.name:
+                    painter.drawEllipse(temp_selection)
+                else:
+                    painter.drawRect(temp_selection)
+        
+        painter.end()
 
     @Slot()
     def draw_canva(self) -> None:
@@ -286,3 +328,115 @@ class CanvaWidget(QWidget):
             self.draw_canva()
         except Exception as e:
             print(f"Error loading image: {e}")
+
+    # =========================================================================
+    # Tool Management
+    # =========================================================================
+
+    def set_tool(self, tool) -> None:
+        """
+        Set the current active tool.
+
+        Args:
+            tool: The tool instance to use
+        """
+        self.current_tool = tool
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        """Handle mouse press events for tools"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            pos = event.position().toPoint()
+            
+            # Check if clicking inside an active selection (for moving it)
+            if self.canva.has_selection():
+                selection_rect, selection_type = self.canva.get_selection()
+                if selection_rect and selection_rect.contains(pos):
+                    # Start moving the selection
+                    self.moving_selection = True
+                    self.move_start_point = QPoint(pos)
+                    self._temp_selection_offset = QPoint(0, 0)
+                    return
+            
+            # Otherwise, use the current tool
+            if self.current_tool:
+                self.current_tool.mouse_press(pos)
+                
+                # For drawing tools (not selection), apply immediately on press
+                if self.canva.active_layer and not hasattr(self.current_tool, 'get_selection'):
+                    self.current_tool.apply(pos, self.canva.active_layer)
+                    self.draw_canva()
+                
+                self.update()
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        """Handle mouse move events for tools"""
+        pos = event.position().toPoint()
+        
+        # Handle moving selection
+        if self.moving_selection and self.move_start_point:
+            self._temp_selection_offset = pos - self.move_start_point
+            self.update()  # Redraw with temporary offset
+            return
+        
+        # Otherwise, use the current tool
+        if self.current_tool:
+            # Call mouse_move to update tool state
+            if self.canva.active_layer:
+                self.current_tool.mouse_move(pos, self.canva.active_layer)
+            
+            # For drawing tools, apply the tool during mouse move when drawing
+            if self.current_tool.is_drawing and self.canva.active_layer and not hasattr(self.current_tool, 'get_selection'):
+                self.current_tool.apply(pos, self.canva.active_layer)
+                self.draw_canva()
+            
+            self.update()
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        """Handle mouse release events for tools"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            pos = event.position().toPoint()
+            
+            # Handle selection move completion
+            if self.moving_selection and self.move_start_point:
+                offset = pos - self.move_start_point
+                
+                # Only move if there's actual movement
+                if not offset.isNull() and self.canva.active_layer:
+                    selection_rect, selection_type = self.canva.get_selection()
+                    if selection_rect:
+                        # Calculate new top-left position
+                        new_top_left = QPoint(selection_rect.x() + offset.x(), 
+                                             selection_rect.y() + offset.y())
+                        
+                        # Move the selection content
+                        self.canva.active_layer.move_selection(
+                            selection_rect, 
+                            new_top_left, 
+                            selection_type, 
+                            clear_source=True
+                        )
+                        
+                        # Update selection rectangle to new position
+                        new_rect = selection_rect.translated(offset)
+                        self.canva.set_selection(new_rect, selection_type)
+                        
+                        self.draw_canva()
+                
+                self.moving_selection = False
+                self.move_start_point = None
+                self._temp_selection_offset = QPoint(0, 0)
+                self.update()
+                return
+            
+            # Otherwise, handle tool release
+            if self.current_tool:
+                self.current_tool.mouse_release(pos)
+                
+                # If using selection tool, save selection to canva
+                if hasattr(self.current_tool, 'get_selection'):
+                    selection = self.current_tool.get_selection()
+                    if selection and not selection.isEmpty():
+                        selection_type = 'ellipse' if 'Ellipse' in self.current_tool.name else 'rectangle'
+                        self.canva.set_selection(selection, selection_type)
+                
+                self.update()
