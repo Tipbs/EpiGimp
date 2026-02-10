@@ -307,7 +307,6 @@ class Canva:
             print("compositing")
             return self.composite_different_sizes(layer, getattr(layer, 'position', (0,0)))
 
-        print("no compositing")
         return layer.get_pil()
 
     def get_img(self) -> Layer:
